@@ -1073,7 +1073,7 @@ void cpu_x86_inject_mce(Monitor *mon, CPUX86State *cenv, int bank,
                         uint64_t misc, int flags);
 
 /* load efer and update the corresponding hflags. XXX: do consistency
-   checks with cpuid bits ? */
+   checks with cpuid bits? */
 static inline void cpu_load_efer(CPUX86State *env, uint64_t val)
 {
     env->efer = val;
