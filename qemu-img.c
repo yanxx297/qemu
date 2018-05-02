@@ -490,12 +490,11 @@ fail:
 
 static void dump_json_image_check(ImageCheck *check, bool quiet)
 {
-    Error *local_err = NULL;
     QString *str;
     QmpOutputVisitor *ov = qmp_output_visitor_new();
     QObject *obj;
     visit_type_ImageCheck(qmp_output_get_visitor(ov), NULL, &check,
-                          &local_err);
+                          &error_abort);
     obj = qmp_output_get_qobject(ov);
     str = qobject_to_json_pretty(obj);
     assert(str != NULL);
@@ -2182,12 +2181,11 @@ static void dump_snapshots(BlockDriverState *bs)
 
 static void dump_json_image_info_list(ImageInfoList *list)
 {
-    Error *local_err = NULL;
     QString *str;
     QmpOutputVisitor *ov = qmp_output_visitor_new();
     QObject *obj;
     visit_type_ImageInfoList(qmp_output_get_visitor(ov), NULL, &list,
-                             &local_err);
+                             &error_abort);
     obj = qmp_output_get_qobject(ov);
     str = qobject_to_json_pretty(obj);
     assert(str != NULL);
@@ -2199,11 +2197,11 @@ static void dump_json_image_info_list(ImageInfoList *list)
 
 static void dump_json_image_info(ImageInfo *info)
 {
-    Error *local_err = NULL;
     QString *str;
     QmpOutputVisitor *ov = qmp_output_visitor_new();
     QObject *obj;
-    visit_type_ImageInfo(qmp_output_get_visitor(ov), NULL, &info, &local_err);
+    visit_type_ImageInfo(qmp_output_get_visitor(ov), NULL, &info,
+                         &error_abort);
     obj = qmp_output_get_qobject(ov);
     str = qobject_to_json_pretty(obj);
     assert(str != NULL);
