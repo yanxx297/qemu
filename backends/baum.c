@@ -24,8 +24,7 @@
 #include "qemu-common.h"
 #include "char/char.h"
 #include "qemu/timer.h"
-#include "hw/usb.h"
-#include "char/baum.h"
+#include "usb.h"
 #include <brlapi.h>
 #include <brlapi_constants.h>
 #include <brlapi_keycodes.h>
