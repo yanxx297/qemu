@@ -2381,3 +2381,9 @@ EQMP
         .mhandler.cmd_new = qmp_marshal_input_query_machines,
     },
 
+    {
+        .name       = "query-cpu-definitions",
+        .args_type  = "",
+        .mhandler.cmd_new = qmp_marshal_input_query_cpu_definitions,
+    },
+
