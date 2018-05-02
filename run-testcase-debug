@@ -26,7 +26,7 @@ export KEMUFUZZER_PRE_STATE="$pre"
 export KEMUFUZZER_POST_STATE="$post"
 export KEMUFUZZER_TESTCASE_CHECKSUM="no checksum"
 
-/usr/bin/time -f %e $here/i386-softmmu/qemu-system-i386 -m 4 -d in_asm,cpu -fda "$floppy" -display none $4 
+/usr/bin/time -f %e $here/i386-softmmu/qemu-system-i386 -m 4 -d in_asm,cpu -D /tmp/qemu.log -fda "$floppy" -display none $4 
 ret=$?
 if [ $ret -eq 0 ]
 then
