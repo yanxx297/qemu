@@ -7,8 +7,6 @@
 #include "hw/qdev.h"
 #include "qom/object.h"
 
-typedef struct QEMUMachine QEMUMachine;
-
 typedef struct QEMUMachineInitArgs {
     const QEMUMachine *machine;
     ram_addr_t ram_size;
