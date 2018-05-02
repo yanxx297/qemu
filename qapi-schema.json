@@ -3348,3 +3348,5 @@
 # Since: 2.1
 ##
 { 'command': 'query-acpi-ospm-status', 'returns': ['ACPIOSTInfo'] }
+
+{ 'include': 'qapi-event.json' }
