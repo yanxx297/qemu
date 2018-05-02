@@ -1318,7 +1318,7 @@ static TypeInfo ich9_uhci3_info = {
     .class_init    = ich9_uhci3_class_init,
 };
 
-static void uhci_register(void)
+static void uhci_register_types(void)
 {
     type_register_static(&piix3_uhci_info);
     type_register_static(&piix4_uhci_info);
@@ -1327,7 +1327,8 @@ static void uhci_register(void)
     type_register_static(&ich9_uhci2_info);
     type_register_static(&ich9_uhci3_info);
 }
-device_init(uhci_register);
+
+type_init(uhci_register_types)
 
 void usb_uhci_piix3_init(PCIBus *bus, int devfn)
 {
