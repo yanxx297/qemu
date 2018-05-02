@@ -2754,11 +2754,6 @@ void kvm_s390_apply_cpu_model(const S390CPUModel *model, Error **errp)
     }
     /* enable CMM via CMMA */
     if (test_bit(S390_FEAT_CMM, model->features)) {
-        if (mem_path) {
-            warn_report("CMM will not be enabled because it is not "
-                        "compatible to hugetlbfs.");
-        } else {
-            kvm_s390_enable_cmma();
-        }
+        kvm_s390_enable_cmma();
     }
 }
