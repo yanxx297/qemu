@@ -773,7 +773,7 @@ static int cpu_x86_fill_model_id(char *str)
     return 0;
 }
 
-static int cpu_x86_fill_host(x86_def_t *x86_cpu_def)
+static void cpu_x86_fill_host(x86_def_t *x86_cpu_def)
 {
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
 
@@ -826,8 +826,6 @@ static int cpu_x86_fill_host(x86_def_t *x86_cpu_def)
      * unsupported ones later.
      */
     x86_cpu_def->svm_features = -1;
-
-    return 0;
 }
 
 static int unavailable_host_feature(struct model_features_t *f, uint32_t mask)
