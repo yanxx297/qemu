@@ -322,11 +322,10 @@ bool e820_get_entry(int, uint32_t, uint64_t *, uint64_t *);
 
 #define PC_COMPAT_2_0 \
         {\
-            .driver   = "PIIX4_PM",\
-            .property = "memory-hotplug-support",\
+            .driver   = "virtio-scsi-pci",\
+            .property = "any_layout",\
             .value    = "off",\
-        },\
-        {\
+        },{\
             .driver   = "apic",\
             .property = "version",\
             .value    = stringify(0x11),\
