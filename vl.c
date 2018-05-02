@@ -3752,6 +3752,11 @@ int main(int argc, char **argv, char **envp)
                 configure_msg(opts);
                 break;
             case QEMU_OPTION_dump_vmstate:
+                if (vmstate_dump_file) {
+                    fprintf(stderr, "qemu: only one '-dump-vmstate' "
+                            "option may be given\n");
+                    exit(1);
+                }
                 vmstate_dump_file = fopen(optarg, "w");
                 if (vmstate_dump_file == NULL) {
                     fprintf(stderr, "open %s: %s\n", optarg, strerror(errno));
