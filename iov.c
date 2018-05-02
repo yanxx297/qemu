@@ -251,6 +251,7 @@ unsigned iov_copy(struct iovec *dst_iov, unsigned int dst_iov_cnt,
     assert(offset == 0);
     return j;
 }
+
 /* io vectors */
 
 void qemu_iovec_init(QEMUIOVector *qiov, int alloc_hint)
