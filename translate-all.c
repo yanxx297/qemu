@@ -171,11 +171,13 @@ void cpu_gen_init(void)
 }
 
 /* return non zero if the very first instruction is invalid so that
-   the virtual CPU can trigger an exception.
-
-   '*gen_code_size_ptr' contains the size of the generated code (host
-   code).
-*/
+ * the virtual CPU can trigger an exception.
+ *
+ * '*gen_code_size_ptr' contains the size of the generated code (host
+ * code).
+ *
+ * Called with mmap_lock held for user-mode emulation.
+ */
 int cpu_gen_code(CPUArchState *env, TranslationBlock *tb, int *gen_code_size_ptr)
 {
     TCGContext *s = &tcg_ctx;
@@ -420,6 +422,9 @@ static void page_init(void)
 #endif
 }
 
+/* If alloc=1:
+ * Called with mmap_lock held for user-mode emulation.
+ */
 static PageDesc *page_find_alloc(tb_page_addr_t index, int alloc)
 {
     PageDesc *pd;
@@ -1027,6 +1032,7 @@ static void build_page_bitmap(PageDesc *p)
     }
 }
 
+/* Called with mmap_lock held for user mode emulation.  */
 TranslationBlock *tb_gen_code(CPUState *cpu,
                               target_ulong pc, target_ulong cs_base,
                               int flags, int cflags)
@@ -1074,6 +1080,8 @@ TranslationBlock *tb_gen_code(CPUState *cpu,
  * 'is_cpu_write_access' should be true if called from a real cpu write
  * access: the virtual CPU will exit the current TB if code is modified inside
  * this TB.
+ *
+ * Called with mmap_lock held for user-mode emulation
  */
 void tb_invalidate_phys_range(tb_page_addr_t start, tb_page_addr_t end)
 {
@@ -1090,6 +1098,8 @@ void tb_invalidate_phys_range(tb_page_addr_t start, tb_page_addr_t end)
  * 'is_cpu_write_access' should be true if called from a real cpu write
  * access: the virtual CPU will exit the current TB if code is modified inside
  * this TB.
+ *
+ * Called with mmap_lock held for user-mode emulation
  */
 void tb_invalidate_phys_page_range(tb_page_addr_t start, tb_page_addr_t end,
                                    int is_cpu_write_access)
@@ -1238,6 +1248,7 @@ void tb_invalidate_phys_page_fast(tb_page_addr_t start, int len)
 }
 
 #if !defined(CONFIG_SOFTMMU)
+/* Called with mmap_lock held.  */
 static void tb_invalidate_phys_page(tb_page_addr_t addr,
                                     uintptr_t pc, void *puc,
                                     bool locked)
@@ -1307,7 +1318,10 @@ static void tb_invalidate_phys_page(tb_page_addr_t addr,
 }
 #endif
 
-/* add the tb in the target page and protect it if necessary */
+/* add the tb in the target page and protect it if necessary
+ *
+ * Called with mmap_lock held for user-mode emulation.
+ */
 static inline void tb_alloc_page(TranslationBlock *tb,
                                  unsigned int n, tb_page_addr_t page_addr)
 {
@@ -1363,7 +1377,8 @@ static inline void tb_alloc_page(TranslationBlock *tb,
 }
 
 /* add a new TB and link it to the physical page tables. phys_page2 is
-   (-1) to indicate that only one page contains the TB. */
+ * (-1) to indicate that only one page contains the TB.
+ */
 static void tb_link_page(TranslationBlock *tb, tb_page_addr_t phys_pc,
                          tb_page_addr_t phys_page2)
 {
