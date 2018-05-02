@@ -3,7 +3,7 @@
 
 #include "block/aio.h"
 #include "block/aio-wait.h"
-#include "qapi-types.h"
+#include "qapi/qapi-types-block-core.h"
 #include "qemu/iov.h"
 #include "qemu/coroutine.h"
 #include "block/accounting.h"
