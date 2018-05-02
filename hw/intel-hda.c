@@ -1268,14 +1268,14 @@ static void intel_hda_class_init_ich9(ObjectClass *klass, void *data)
     dc->desc = "Intel HD Audio Controller (ich9)";
 }
 
-static TypeInfo intel_hda_info_ich6 = {
+static const TypeInfo intel_hda_info_ich6 = {
     .name          = "intel-hda",
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(IntelHDAState),
     .class_init    = intel_hda_class_init_ich6,
 };
 
-static TypeInfo intel_hda_info_ich9 = {
+static const TypeInfo intel_hda_info_ich9 = {
     .name          = "ich9-intel-hda",
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(IntelHDAState),
