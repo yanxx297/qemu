@@ -3525,7 +3525,9 @@ int main(int argc, char **argv, char **envp)
                 full_screen = 1;
                 break;
             case QEMU_OPTION_no_frame:
+#ifdef CONFIG_SDL                
                 no_frame = 1;
+#endif                
                 break;
             case QEMU_OPTION_alt_grab:
                 alt_grab = 1;
@@ -4081,10 +4083,12 @@ int main(int argc, char **argv, char **envp)
 #endif
     }
 
+#ifdef CONFIG_SDL    
     if ((no_frame || alt_grab || ctrl_grab) && display_type != DT_SDL) {
         fprintf(stderr, "-no-frame, -alt-grab and -ctrl-grab are only valid "
                         "for SDL, ignoring option\n");
     }
+#endif    
     if (no_quit && (display_type != DT_GTK && display_type != DT_SDL)) {
         fprintf(stderr, "-no-quit is only valid for GTK and SDL, "
                         "ignoring option\n");
