@@ -1400,8 +1400,8 @@ EOF
     xen=no
 
   # Xen unstable
-  elif (
-      cat > $TMPC <<EOF
+  elif
+      cat > $TMPC <<EOF &&
 #include <xenctrl.h>
 #include <xenstore.h>
 #include <stdint.h>
@@ -1421,12 +1421,12 @@ int main(void) {
 }
 EOF
       compile_prog "" "$xen_libs"
-    ) ; then
+    then
     xen_ctrl_version=420
     xen=yes
 
-  elif (
-      cat > $TMPC <<EOF
+  elif
+      cat > $TMPC <<EOF &&
 #include <xenctrl.h>
 #include <xs.h>
 #include <stdint.h>
@@ -1445,13 +1445,13 @@ int main(void) {
 }
 EOF
       compile_prog "" "$xen_libs"
-    ) ; then
+    then
     xen_ctrl_version=410
     xen=yes
 
   # Xen 4.0.0
-  elif (
-      cat > $TMPC <<EOF
+  elif
+      cat > $TMPC <<EOF &&
 #include <xenctrl.h>
 #include <xs.h>
 #include <stdint.h>
@@ -1472,13 +1472,13 @@ int main(void) {
 }
 EOF
       compile_prog "" "$xen_libs"
-    ) ; then
+    then
     xen_ctrl_version=400
     xen=yes
 
   # Xen 3.4.0
-  elif (
-      cat > $TMPC <<EOF
+  elif
+      cat > $TMPC <<EOF &&
 #include <xenctrl.h>
 #include <xs.h>
 int main(void) {
@@ -1494,13 +1494,13 @@ int main(void) {
 }
 EOF
       compile_prog "" "$xen_libs"
-    ) ; then
+    then
     xen_ctrl_version=340
     xen=yes
 
   # Xen 3.3.0
-  elif (
-      cat > $TMPC <<EOF
+  elif
+      cat > $TMPC <<EOF &&
 #include <xenctrl.h>
 #include <xs.h>
 int main(void) {
@@ -1512,7 +1512,7 @@ int main(void) {
 }
 EOF
       compile_prog "" "$xen_libs"
-    ) ; then
+    then
     xen_ctrl_version=330
     xen=yes
 
