@@ -42,7 +42,9 @@ bool qemu_cpu_has_work(CPUState *cpu)
 
 void cpu_loop_exit(CPUArchState *env)
 {
-    env->current_tb = NULL;
+    CPUState *cpu = ENV_GET_CPU(env);
+
+    cpu->current_tb = NULL;
     longjmp(env->jmp_env, 1);
 }
 
@@ -64,6 +66,7 @@ void cpu_resume_from_signal(CPUArchState *env, void *puc)
 static void cpu_exec_nocache(CPUArchState *env, int max_cycles,
                              TranslationBlock *orig_tb)
 {
+    CPUState *cpu = ENV_GET_CPU(env);
     tcg_target_ulong next_tb;
     TranslationBlock *tb;
 
@@ -74,10 +77,10 @@ static void cpu_exec_nocache(CPUArchState *env, int max_cycles,
 
     tb = tb_gen_code(env, orig_tb->pc, orig_tb->cs_base, orig_tb->flags,
                      max_cycles);
-    env->current_tb = tb;
+    cpu->current_tb = tb;
     /* execute the generated code */
     next_tb = tcg_qemu_tb_exec(env, tb->tc_ptr);
-    env->current_tb = NULL;
+    cpu->current_tb = NULL;
 
     if ((next_tb & 3) == 2) {
         /* Restore PC.  This may happen if async event occurs before
@@ -609,7 +612,7 @@ int cpu_exec(CPUArchState *env)
                    TB, but before it is linked into a potentially
                    infinite loop and becomes env->current_tb. Avoid
                    starting execution if there is a pending interrupt. */
-                env->current_tb = tb;
+                cpu->current_tb = tb;
                 barrier();
                 if (likely(!cpu->exit_request)) {
                     tc_ptr = tb->tc_ptr;
@@ -643,7 +646,7 @@ int cpu_exec(CPUArchState *env)
                         }
                     }
                 }
-                env->current_tb = NULL;
+                cpu->current_tb = NULL;
                 /* reset soft MMU for next block (it can currently
                    only be set by a memory fault) */
             } /* for(;;) */
