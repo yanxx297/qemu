@@ -7,8 +7,8 @@
  * This code is licensed under the LGPL
  */
 
-#include "hw.h"
-#include "arm-misc.h"
+#include "hw/hw.h"
+#include "hw/arm-misc.h"
 #include "sysemu/kvm.h"
 
 /* Input 0 is IRQ and input 1 is FIQ.  */
