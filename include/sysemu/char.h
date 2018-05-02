@@ -103,7 +103,6 @@ struct Chardev {
     int be_open;
     GSource *gsource;
     DECLARE_BITMAP(features, QEMU_CHAR_FEATURE_LAST);
-    QTAILQ_ENTRY(Chardev) next;
 };
 
 /**
