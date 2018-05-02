@@ -7,14 +7,10 @@
             .property = "scsi",\
             .value    = "true",\
         },{\
-            .driver   = "virtio-pci",\
-            .property = "x-disable-pcie",\
-            .value    = "on",\
-        },{\
-            .driver   = "virtio-pci",\
-            .property = "migrate-extra",\
+            .driver   = "e1000",\
+            .property = "extra_mac_registers",\
             .value    = "off",\
-        },
+         },
 
 #define HW_COMPAT_2_3 \
         {\
