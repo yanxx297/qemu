@@ -1357,7 +1357,9 @@ void hmp_block_set_io_throttle(Monitor *mon, const QDict *qdict)
                               false,
                               0,
                               false, /* No default I/O size */
-                              0, &err);
+                              0,
+                              false,
+                              NULL, &err);
     hmp_handle_error(mon, &err);
 }
 
