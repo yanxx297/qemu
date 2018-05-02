@@ -317,7 +317,7 @@ int vhost_net_start(VirtIODevice *dev, NetClientState *ncs,
         r = vhost_net_start_one(get_vhost_net(ncs[i].peer), dev);
 
         if (r < 0) {
-            goto err_start;
+            goto err;
         }
     }
 
