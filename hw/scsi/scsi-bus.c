@@ -2006,6 +2006,16 @@ static void scsi_device_class_init(ObjectClass *klass, void *data)
     k->props     = scsi_props;
 }
 
+static void scsi_dev_instance_init(Object *obj)
+{
+    DeviceState *dev = DEVICE(obj);
+    SCSIDevice *s = DO_UPCAST(SCSIDevice, qdev, dev);
+
+    device_add_bootindex_property(obj, &s->conf.bootindex,
+                                  "bootindex", NULL,
+                                  &s->qdev, NULL);
+}
+
 static const TypeInfo scsi_device_type_info = {
     .name = TYPE_SCSI_DEVICE,
     .parent = TYPE_DEVICE,
@@ -2013,6 +2023,7 @@ static const TypeInfo scsi_device_type_info = {
     .abstract = true,
     .class_size = sizeof(SCSIDeviceClass),
     .class_init = scsi_device_class_init,
+    .instance_init = scsi_dev_instance_init,
 };
 
 static void scsi_register_types(void)
