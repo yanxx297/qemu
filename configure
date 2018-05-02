@@ -1364,6 +1364,14 @@ esac
 fi
 
 ##########################################
+# pkg-config probe
+
+if ! has "$pkg_config_exe"; then
+  echo "Error: pkg-config binary '$pkg_config_exe' not found"
+  exit 1
+fi
+
+##########################################
 # NPTL probe
 
 if test "$nptl" != "no" ; then
@@ -1591,14 +1599,6 @@ if test "$xen_pci_passthrough" != "no"; then
     fi
     xen_pci_passthrough=no
   fi
-fi
-
-##########################################
-# pkg-config probe
-
-if ! has "$pkg_config_exe"; then
-  echo "Error: pkg-config binary '$pkg_config_exe' not found"
-  exit 1
 fi
 
 ##########################################
