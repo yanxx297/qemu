@@ -31,6 +31,7 @@
 #include "qemu/notify.h"
 #include "qom/object.h"
 #include "qemu/rcu.h"
+#include "qemu/typedefs.h"
 
 #define MAX_PHYS_ADDR_SPACE_BITS 62
 #define MAX_PHYS_ADDR            (((hwaddr)1 << MAX_PHYS_ADDR_SPACE_BITS) - 1)
@@ -169,6 +170,7 @@ struct MemoryRegion {
     bool global_locking;
     uint8_t dirty_log_mask;
     ram_addr_t ram_addr;
+    RAMBlock *ram_block;
     Object *owner;
     const MemoryRegionIOMMUOps *iommu_ops;
 
