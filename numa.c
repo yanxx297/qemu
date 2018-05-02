@@ -153,8 +153,7 @@ static int parse_numa(QemuOpts *opts, void *opaque)
     return 0;
 
 error:
-    qerror_report_err(err);
-    error_free(err);
+    error_report_err(err);
 
     if (object) {
         QapiDeallocVisitor *dv = qapi_dealloc_visitor_new();
@@ -274,8 +273,7 @@ static void allocate_system_memory_nonnuma(MemoryRegion *mr, Object *owner,
          * regular RAM allocation.
          */
         if (err) {
-            qerror_report_err(err);
-            error_free(err);
+            error_report_err(err);
             memory_region_init_ram(mr, owner, name, ram_size, &error_abort);
         }
 #else
@@ -310,7 +308,7 @@ void memory_region_allocate_system_memory(MemoryRegion *mr, Object *owner,
         }
         MemoryRegion *seg = host_memory_backend_get_memory(backend, &local_err);
         if (local_err) {
-            qerror_report_err(local_err);
+            error_report_err(local_err);
             exit(1);
         }
 
