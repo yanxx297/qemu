@@ -268,7 +268,7 @@ static bool tb_cmp(const void *p, const void *d)
     return false;
 }
 
-static TranslationBlock *tb_find_physical(CPUState *cpu,
+static TranslationBlock *tb_htable_lookup(CPUState *cpu,
                                           target_ulong pc,
                                           target_ulong cs_base,
                                           uint32_t flags)
@@ -304,7 +304,7 @@ static inline TranslationBlock *tb_find(CPUState *cpu,
     tb = atomic_rcu_read(&cpu->tb_jmp_cache[tb_jmp_cache_hash_func(pc)]);
     if (unlikely(!tb || tb->pc != pc || tb->cs_base != cs_base ||
                  tb->flags != flags)) {
-        tb = tb_find_physical(cpu, pc, cs_base, flags);
+        tb = tb_htable_lookup(cpu, pc, cs_base, flags);
         if (!tb) {
 
             /* mmap_lock is needed by tb_gen_code, and mmap_lock must be
@@ -318,7 +318,7 @@ static inline TranslationBlock *tb_find(CPUState *cpu,
             /* There's a chance that our desired tb has been translated while
              * taking the locks so we check again inside the lock.
              */
-            tb = tb_find_physical(cpu, pc, cs_base, flags);
+            tb = tb_htable_lookup(cpu, pc, cs_base, flags);
             if (!tb) {
                 /* if no translated code available, then translate it now */
                 tb = tb_gen_code(cpu, pc, cs_base, flags, 0);
