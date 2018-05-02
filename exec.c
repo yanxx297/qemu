@@ -3496,6 +3496,14 @@ static void io_mem_init(void)
                           "watch", UINT64_MAX);
 }
 
+static void core_begin(MemoryListener *listener)
+{
+}
+
+static void core_commit(MemoryListener *listener)
+{
+}
+
 static void core_region_add(MemoryListener *listener,
                             MemoryRegionSection *section)
 {
@@ -3506,6 +3514,11 @@ static void core_region_del(MemoryListener *listener,
                             MemoryRegionSection *section)
 {
     cpu_register_physical_memory_log(section, false);
+}
+
+static void core_region_nop(MemoryListener *listener,
+                            MemoryRegionSection *section)
+{
 }
 
 static void core_log_start(MemoryListener *listener,
@@ -3545,6 +3558,14 @@ static void core_eventfd_del(MemoryListener *listener,
 {
 }
 
+static void io_begin(MemoryListener *listener)
+{
+}
+
+static void io_commit(MemoryListener *listener)
+{
+}
+
 static void io_region_add(MemoryListener *listener,
                           MemoryRegionSection *section)
 {
@@ -3557,6 +3578,11 @@ static void io_region_del(MemoryListener *listener,
                           MemoryRegionSection *section)
 {
     isa_unassign_ioport(section->offset_within_address_space, section->size);
+}
+
+static void io_region_nop(MemoryListener *listener,
+                          MemoryRegionSection *section)
+{
 }
 
 static void io_log_start(MemoryListener *listener,
@@ -3595,8 +3621,11 @@ static void io_eventfd_del(MemoryListener *listener,
 }
 
 static MemoryListener core_memory_listener = {
+    .begin = core_begin,
+    .commit = core_commit,
     .region_add = core_region_add,
     .region_del = core_region_del,
+    .region_nop = core_region_nop,
     .log_start = core_log_start,
     .log_stop = core_log_stop,
     .log_sync = core_log_sync,
@@ -3608,8 +3637,11 @@ static MemoryListener core_memory_listener = {
 };
 
 static MemoryListener io_memory_listener = {
+    .begin = io_begin,
+    .commit = io_commit,
     .region_add = io_region_add,
     .region_del = io_region_del,
+    .region_nop = io_region_nop,
     .log_start = io_log_start,
     .log_stop = io_log_stop,
     .log_sync = io_log_sync,
