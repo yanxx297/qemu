@@ -1778,8 +1778,7 @@ static void qemu_chr_parse_vc(QemuOpts *opts, ChardevBackend *backend,
 
 static void register_types(void)
 {
-    register_char_driver_qapi("vc", CHARDEV_BACKEND_KIND_VC,
-                              qemu_chr_parse_vc);
+    register_char_driver("vc", vc_init);
 }
 
 type_init(register_types);
