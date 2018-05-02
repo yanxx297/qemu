@@ -234,7 +234,8 @@ static int64_t cpu_get_clock_locked(void)
 }
 
 /* Return the monotonic time elapsed in VM, i.e.,
- * the time between vm_start and vm_stop */
+ * the time between vm_start and vm_stop
+ */
 int64_t cpu_get_clock(void)
 {
     int64_t ti;
