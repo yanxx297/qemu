@@ -4531,23 +4531,15 @@ if compile_prog "" "" ; then
     have_fsxattr=yes
 fi
 
-#################################################
-# Sparc implicitly links with --relax, which is
-# incompatible with -r, so --no-relax should be
-# given. It does no harm to give it on other
-# platforms too.
-
-# Note: the prototype is needed since QEMU_CFLAGS
-#       contains -Wmissing-prototypes
+have_rtnetlink=no
 cat > $TMPC << EOF
-extern int foo(void);
-int foo(void) { return 0; }
+#include <linux/rtnetlink.h>
+int main(void) {
+  return IFLA_PROTO_DOWN;
+}
 EOF
-if ! compile_object ""; then
-  error_exit "Failed to compile object file for LD_REL_FLAGS test"
-fi
-if do_cc -nostdlib -Wl,-r -Wl,--no-relax -o $TMPMO $TMPO; then
-  LD_REL_FLAGS="-Wl,--no-relax"
+if compile_prog "" "" ; then
+    have_rtnetlink=yes
 fi
 
 ##########################################
@@ -5489,6 +5481,10 @@ echo "CONFIG_TRACE_FILE=$trace_file" >> $config_host_mak
 
 if test "$rdma" = "yes" ; then
   echo "CONFIG_RDMA=y" >> $config_host_mak
+fi
+
+if test "$have_rtnetlink" = "yes" ; then
+  echo "CONFIG_RTNETLINK=y" >> $config_host_mak
 fi
 
 # Hold two types of flag:
