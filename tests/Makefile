@@ -13,8 +13,8 @@ check-unit-y += tests/test-qmp-commands$(EXESUF)
 check-unit-y += tests/test-string-input-visitor$(EXESUF)
 check-unit-y += tests/test-string-output-visitor$(EXESUF)
 check-unit-y += tests/test-coroutine$(EXESUF)
-check-unit-y += tests/test-iov$(EXESUF)
 check-unit-y += tests/test-visitor-serialization$(EXESUF)
+check-unit-y += tests/test-iov$(EXESUF)
 
 check-block-$(CONFIG_POSIX) += tests/qemu-iotests-quick.sh
 
