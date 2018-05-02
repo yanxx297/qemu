@@ -1377,7 +1377,7 @@ void kvm_irqchip_set_qemuirq_gsi(KVMState *s, qemu_irq irq, int gsi)
     g_hash_table_insert(s->gsimap, irq, GINT_TO_POINTER(gsi));
 }
 
-static int kvm_irqchip_create(MachineState *machine, KVMState *s)
+static void kvm_irqchip_create(MachineState *machine, KVMState *s)
 {
     int ret;
 
@@ -1414,8 +1414,6 @@ static int kvm_irqchip_create(MachineState *machine, KVMState *s)
     kvm_init_irq_routing(s);
 
     s->gsimap = g_hash_table_new(g_direct_hash, g_direct_equal);
-
-    return 0;
 }
 
 /* Find number of supported CPUs using the recommended
