@@ -2109,7 +2109,7 @@ devices.
 
 Syntax for specifying a sheepdog device
 @example
-sheepdog[+tcp]://[host:port]/vdiname[#snapid|#tag]
+sheepdog[+tcp|+unix]://[host:port]/vdiname[?socket=path][#snapid|#tag]
 @end example
 
 Example
