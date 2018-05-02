@@ -4205,7 +4205,6 @@ case "$target_name" in
   ;;
   x86_64)
     TARGET_BASE_ARCH=i386
-    target_nptl="no"
   ;;
   alpha)
   ;;
