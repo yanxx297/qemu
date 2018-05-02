@@ -890,8 +890,7 @@ static void hmp_trace_event(Monitor *mon, const QDict *qdict)
 
     qmp_trace_event_set_state(tp_name, new_state, true, true, &local_err);
     if (local_err) {
-        qerror_report_err(local_err);
-        error_free(local_err);
+        error_report_err(local_err);
     }
 }
 
