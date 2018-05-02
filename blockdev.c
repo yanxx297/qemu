@@ -2304,7 +2304,7 @@ void qmp_blockdev_add(BlockdevOptions *options, Error **errp)
     qdict_flatten(qdict);
 
     blockdev_init(NULL, qdict, &local_err);
-    if (error_is_set(&local_err)) {
+    if (local_err) {
         error_propagate(errp, local_err);
         goto fail;
     }
