@@ -913,7 +913,6 @@ L: qemu-block@nongnu.org
 S: Supported
 F: hw/block/virtio-blk.c
 F: hw/block/dataplane/*
-F: hw/virtio/dataplane/*
 F: tests/virtio-blk-test.c
 T: git git://github.com/stefanha/qemu.git block
 
