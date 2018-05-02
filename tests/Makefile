@@ -45,6 +45,8 @@ gcov-files-test-aio-$(CONFIG_WIN32) = aio-win32.c
 gcov-files-test-aio-$(CONFIG_POSIX) = aio-posix.c
 check-unit-y += tests/test-thread-pool$(EXESUF)
 gcov-files-test-thread-pool-y = thread-pool.c
+gcov-files-test-hbitmap-y = util/hbitmap.c
+check-unit-y += tests/test-hbitmap$(EXESUF)
 check-unit-y += tests/test-x86-cpuid$(EXESUF)
 # all code tested by test-x86-cpuid is inside topology.h
 gcov-files-test-x86-cpuid-y =
@@ -94,6 +96,7 @@ tests/test-coroutine$(EXESUF): tests/test-coroutine.o $(block-obj-y) libqemuutil
 tests/test-aio$(EXESUF): tests/test-aio.o $(block-obj-y) libqemuutil.a libqemustub.a
 tests/test-thread-pool$(EXESUF): tests/test-thread-pool.o $(block-obj-y) libqemuutil.a libqemustub.a
 tests/test-iov$(EXESUF): tests/test-iov.o libqemuutil.a
+tests/test-hbitmap$(EXESUF): tests/test-hbitmap.o libqemuutil.a libqemustub.a
 tests/test-x86-cpuid$(EXESUF): tests/test-x86-cpuid.o
 
 tests/test-qapi-types.c tests/test-qapi-types.h :\
