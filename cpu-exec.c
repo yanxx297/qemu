@@ -599,13 +599,11 @@ static inline void cpu_loop_exec_tb(CPUState *cpu, TranslationBlock *tb,
     insns_left = atomic_read(&cpu->icount_decr.u32);
     atomic_set(&cpu->icount_decr.u16.high, 0);
     if (insns_left < 0) {
-        /* Something asked us to stop executing
-         * chained TBs; just continue round the main
-         * loop. Whatever requested the exit will also
-         * have set something else (eg exit_request or
-         * interrupt_request) which we will handle
-         * next time around the loop.  But we need to
-         * ensure the zeroing of tcg_exit_req (see cpu_tb_exec)
+        /* Something asked us to stop executing chained TBs; just
+         * continue round the main loop. Whatever requested the exit
+         * will also have set something else (eg exit_request or
+         * interrupt_request) which we will handle next time around
+         * the loop.  But we need to ensure the zeroing of icount_decr
          * comes before the next read of cpu->exit_request
          * or cpu->interrupt_request.
          */
