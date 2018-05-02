@@ -221,7 +221,7 @@ int cpu_exec(CPUArchState *env)
     int ret, interrupt_request;
     TranslationBlock *tb;
     uint8_t *tc_ptr;
-    tcg_target_ulong next_tb;
+    uintptr_t next_tb;
 
 #ifdef CONFIG_KEMUFUZZER
     kemufuzzer_init(env);
