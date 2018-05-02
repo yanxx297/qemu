@@ -155,7 +155,6 @@ static void s390_virtio_net_realize(VirtIOS390Device *s390_dev, Error **errp)
     DeviceState *vdev = DEVICE(&dev->vdev);
     Error *err = NULL;
 
-    virtio_net_set_config_size(&dev->vdev, s390_dev->host_features);
     virtio_net_set_netclient_name(&dev->vdev, qdev->id,
                                   object_get_typename(OBJECT(qdev)));
     qdev_set_parent_bus(vdev, BUS(&s390_dev->bus));
@@ -538,7 +537,7 @@ static unsigned virtio_s390_get_features(DeviceState *d)
 /**************** S390 Virtio Bus Device Descriptions *******************/
 
 static Property s390_virtio_net_properties[] = {
-    DEFINE_VIRTIO_NET_FEATURES(VirtIOS390Device, host_features),
+    DEFINE_VIRTIO_COMMON_FEATURES(VirtIOS390Device, host_features),
     DEFINE_PROP_END_OF_LIST(),
 };
 
