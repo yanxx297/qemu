@@ -4517,6 +4517,8 @@ if compile_prog "" "" ; then
     have_fsxattr=yes
 fi
 
+##########################################
+# check if rtnetlink.h exists and is useful
 have_rtnetlink=no
 cat > $TMPC << EOF
 #include <linux/rtnetlink.h>
@@ -4526,6 +4528,25 @@ int main(void) {
 EOF
 if compile_prog "" "" ; then
     have_rtnetlink=yes
+fi
+
+#################################################
+# Sparc implicitly links with --relax, which is
+# incompatible with -r, so --no-relax should be
+# given. It does no harm to give it on other
+# platforms too.
+
+# Note: the prototype is needed since QEMU_CFLAGS
+#       contains -Wmissing-prototypes
+cat > $TMPC << EOF
+extern int foo(void);
+int foo(void) { return 0; }
+EOF
+if ! compile_object ""; then
+  error_exit "Failed to compile object file for LD_REL_FLAGS test"
+fi
+if do_cc -nostdlib -Wl,-r -Wl,--no-relax -o $TMPMO $TMPO; then
+  LD_REL_FLAGS="-Wl,--no-relax"
 fi
 
 ##########################################
