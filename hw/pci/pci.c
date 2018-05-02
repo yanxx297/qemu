@@ -1576,7 +1576,8 @@ static const char * const pci_nic_names[] = {
 
 /* Initialize a PCI NIC.  */
 /* FIXME callers should check for failure, but don't */
-PCIDevice *pci_nic_init(NICInfo *nd, const char *default_model,
+PCIDevice *pci_nic_init(NICInfo *nd, PCIBus *rootbus,
+                        const char *default_model,
                         const char *default_devaddr)
 {
     const char *devaddr = nd->devaddr ? nd->devaddr : default_devaddr;
@@ -1590,7 +1591,7 @@ PCIDevice *pci_nic_init(NICInfo *nd, const char *default_model,
     if (i < 0)
         return NULL;
 
-    bus = pci_get_bus_devfn(&devfn, pci_find_primary_bus(), devaddr);
+    bus = pci_get_bus_devfn(&devfn, rootbus, devaddr);
     if (!bus) {
         error_report("Invalid PCI device address %s for device %s",
                      devaddr, pci_nic_names[i]);
@@ -1605,7 +1606,8 @@ PCIDevice *pci_nic_init(NICInfo *nd, const char *default_model,
     return pci_dev;
 }
 
-PCIDevice *pci_nic_init_nofail(NICInfo *nd, const char *default_model,
+PCIDevice *pci_nic_init_nofail(NICInfo *nd, PCIBus *rootbus,
+                               const char *default_model,
                                const char *default_devaddr)
 {
     PCIDevice *res;
@@ -1613,7 +1615,7 @@ PCIDevice *pci_nic_init_nofail(NICInfo *nd, const char *default_model,
     if (qemu_show_nic_models(nd->model, pci_nic_models))
         exit(0);
 
-    res = pci_nic_init(nd, default_model, default_devaddr);
+    res = pci_nic_init(nd, rootbus, default_model, default_devaddr);
     if (!res)
         exit(1);
     return res;
