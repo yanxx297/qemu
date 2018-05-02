@@ -2134,8 +2134,7 @@ static int chardev_init_func(QemuOpts *opts, void *opaque)
 
     qemu_chr_new_from_opts(opts, NULL, &local_err);
     if (local_err) {
-        error_report("%s", error_get_pretty(local_err));
-        error_free(local_err);
+        error_report_err(local_err);
         return -1;
     }
     return 0;
@@ -2215,8 +2214,7 @@ static void monitor_parse(const char *optarg, const char *mode, bool pretty)
 
     opts = qemu_opts_create(qemu_find_opts("mon"), label, 1, &local_err);
     if (!opts) {
-        error_report("%s", error_get_pretty(local_err));
-        error_free(local_err);
+        error_report_err(local_err);
         exit(1);
     }
     qemu_opt_set(opts, "mode", mode);
@@ -3757,7 +3755,7 @@ int main(int argc, char **argv, char **envp)
     os_daemonize();
 
     if (qemu_init_main_loop(&main_loop_err)) {
-        error_report("%s", error_get_pretty(main_loop_err));
+        error_report_err(main_loop_err);
         exit(1);
     }
 
@@ -4026,8 +4024,7 @@ int main(int argc, char **argv, char **envp)
         Error *local_err = NULL;
         qtest_init(qtest_chrdev, qtest_log, &local_err);
         if (local_err) {
-            error_report("%s", error_get_pretty(local_err));
-            error_free(local_err);
+            error_report_err(local_err);
             exit(1);
         }
     }
@@ -4049,7 +4046,7 @@ int main(int argc, char **argv, char **envp)
         if (order) {
             validate_bootdevices(order, &local_err);
             if (local_err) {
-                error_report("%s", error_get_pretty(local_err));
+                error_report_err(local_err);
                 exit(1);
             }
             boot_order = order;
@@ -4059,7 +4056,7 @@ int main(int argc, char **argv, char **envp)
         if (once) {
             validate_bootdevices(once, &local_err);
             if (local_err) {
-                error_report("%s", error_get_pretty(local_err));
+                error_report_err(local_err);
                 exit(1);
             }
             normal_boot_order = g_strdup(boot_order);
