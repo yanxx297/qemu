@@ -1175,6 +1175,33 @@ static int kvm_put_msrs(X86CPU *cpu, int level)
             kvm_msr_entry_set(&msrs[n++], MSR_KVM_STEAL_TIME,
                               env->steal_time_msr);
         }
+        if (has_msr_architectural_pmu) {
+            /* Stop the counter.  */
+            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_FIXED_CTR_CTRL, 0);
+            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_GLOBAL_CTRL, 0);
+
+            /* Set the counter values.  */
+            for (i = 0; i < MAX_FIXED_COUNTERS; i++) {
+                kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_FIXED_CTR0 + i,
+                                  env->msr_fixed_counters[i]);
+            }
+            for (i = 0; i < num_architectural_pmu_counters; i++) {
+                kvm_msr_entry_set(&msrs[n++], MSR_P6_PERFCTR0 + i,
+                                  env->msr_gp_counters[i]);
+                kvm_msr_entry_set(&msrs[n++], MSR_P6_EVNTSEL0 + i,
+                                  env->msr_gp_evtsel[i]);
+            }
+            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_GLOBAL_STATUS,
+                              env->msr_global_status);
+            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_GLOBAL_OVF_CTRL,
+                              env->msr_global_ovf_ctrl);
+
+            /* Now start the PMU.  */
+            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_FIXED_CTR_CTRL,
+                              env->msr_fixed_ctr_ctrl);
+            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_GLOBAL_CTRL,
+                              env->msr_global_ctrl);
+        }
         if (hyperv_hypercall_available(cpu)) {
             kvm_msr_entry_set(&msrs[n++], HV_X64_MSR_GUEST_OS_ID, 0);
             kvm_msr_entry_set(&msrs[n++], HV_X64_MSR_HYPERCALL, 0);
