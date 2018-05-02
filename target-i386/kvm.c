@@ -31,7 +31,7 @@
 #include "hw/i386/pc.h"
 #include "hw/i386/apic.h"
 #include "exec/ioport.h"
-#include "hyperv.h"
+#include <asm/hyperv.h>
 #include "hw/pci/pci.h"
 
 //#define DEBUG_KVM
@@ -423,6 +423,22 @@ unsigned long kvm_arch_vcpu_id(CPUState *cs)
     return cpu->env.cpuid_apic_id;
 }
 
+#ifndef KVM_CPUID_SIGNATURE_NEXT
+#define KVM_CPUID_SIGNATURE_NEXT                0x40000100
+#endif
+
+static bool hyperv_hypercall_available(X86CPU *cpu)
+{
+    return cpu->hyperv_vapic ||
+           (cpu->hyperv_spinlock_attempts != HYPERV_SPINLOCK_NEVER_RETRY);
+}
+
+static bool hyperv_enabled(X86CPU *cpu)
+{
+    return hyperv_hypercall_available(cpu) ||
+           cpu->hyperv_relaxed_timing;
+}
+
 #define KVM_MAX_CPUID_ENTRIES  100
 
 int kvm_arch_init_vcpu(CPUState *cs)
@@ -445,7 +461,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
     c = &cpuid_data.entries[cpuid_i++];
     memset(c, 0, sizeof(*c));
     c->function = KVM_CPUID_SIGNATURE;
-    if (!hyperv_enabled()) {
+    if (!hyperv_enabled(cpu)) {
         memcpy(signature, "KVMKVMKVM\0\0\0", 12);
         c->eax = 0;
     } else {
@@ -461,7 +477,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
     c->function = KVM_CPUID_FEATURES;
     c->eax = env->features[FEAT_KVM];
 
-    if (hyperv_enabled()) {
+    if (hyperv_enabled(cpu)) {
         memcpy(signature, "Hv#1\0\0\0\0\0\0\0\0", 12);
         c->eax = signature[0];
 
@@ -474,10 +490,10 @@ int kvm_arch_init_vcpu(CPUState *cs)
         c = &cpuid_data.entries[cpuid_i++];
         memset(c, 0, sizeof(*c));
         c->function = HYPERV_CPUID_FEATURES;
-        if (hyperv_relaxed_timing_enabled()) {
+        if (cpu->hyperv_relaxed_timing) {
             c->eax |= HV_X64_MSR_HYPERCALL_AVAILABLE;
         }
-        if (hyperv_vapic_recommended()) {
+        if (cpu->hyperv_vapic) {
             c->eax |= HV_X64_MSR_HYPERCALL_AVAILABLE;
             c->eax |= HV_X64_MSR_APIC_ACCESS_AVAILABLE;
         }
@@ -485,13 +501,13 @@ int kvm_arch_init_vcpu(CPUState *cs)
         c = &cpuid_data.entries[cpuid_i++];
         memset(c, 0, sizeof(*c));
         c->function = HYPERV_CPUID_ENLIGHTMENT_INFO;
-        if (hyperv_relaxed_timing_enabled()) {
+        if (cpu->hyperv_relaxed_timing) {
             c->eax |= HV_X64_RELAXED_TIMING_RECOMMENDED;
         }
-        if (hyperv_vapic_recommended()) {
+        if (cpu->hyperv_vapic) {
             c->eax |= HV_X64_APIC_ACCESS_RECOMMENDED;
         }
-        c->ebx = hyperv_get_spinlock_retries();
+        c->ebx = cpu->hyperv_spinlock_attempts;
 
         c = &cpuid_data.entries[cpuid_i++];
         memset(c, 0, sizeof(*c));
@@ -1135,38 +1151,11 @@ static int kvm_put_msrs(X86CPU *cpu, int level)
             kvm_msr_entry_set(&msrs[n++], MSR_KVM_STEAL_TIME,
                               env->steal_time_msr);
         }
-        if (has_msr_architectural_pmu) {
-            /* Stop the counter.  */
-            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_FIXED_CTR_CTRL, 0);
-            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_GLOBAL_CTRL, 0);
-
-            /* Set the counter values.  */
-            for (i = 0; i < MAX_FIXED_COUNTERS; i++) {
-                kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_FIXED_CTR0 + i,
-                                  env->msr_fixed_counters[i]);
-            }
-            for (i = 0; i < num_architectural_pmu_counters; i++) {
-                kvm_msr_entry_set(&msrs[n++], MSR_P6_PERFCTR0 + i,
-                                  env->msr_gp_counters[i]);
-                kvm_msr_entry_set(&msrs[n++], MSR_P6_EVNTSEL0 + i,
-                                  env->msr_gp_evtsel[i]);
-            }
-            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_GLOBAL_STATUS,
-                              env->msr_global_status);
-            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_GLOBAL_OVF_CTRL,
-                              env->msr_global_ovf_ctrl);
-
-            /* Now start the PMU.  */
-            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_FIXED_CTR_CTRL,
-                              env->msr_fixed_ctr_ctrl);
-            kvm_msr_entry_set(&msrs[n++], MSR_CORE_PERF_GLOBAL_CTRL,
-                              env->msr_global_ctrl);
-        }
-        if (hyperv_hypercall_available()) {
+        if (hyperv_hypercall_available(cpu)) {
             kvm_msr_entry_set(&msrs[n++], HV_X64_MSR_GUEST_OS_ID, 0);
             kvm_msr_entry_set(&msrs[n++], HV_X64_MSR_HYPERCALL, 0);
         }
-        if (hyperv_vapic_recommended()) {
+        if (cpu->hyperv_vapic) {
             kvm_msr_entry_set(&msrs[n++], HV_X64_MSR_APIC_ASSIST_PAGE, 0);
         }
         kvm_msr_entry_set(&msrs[n++], MSR_IA32_FEATURE_CONTROL, env->msr_ia32_feature_control);

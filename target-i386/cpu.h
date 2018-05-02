@@ -562,24 +562,28 @@ typedef uint32_t FeatureWordArray[FEATURE_WORDS];
 #define CPUID_MWAIT_IBE     (1 << 1) /* Interrupts can exit capability */
 #define CPUID_MWAIT_EMX     (1 << 0) /* enumeration supported */
 
-#define EXCP00_DIVZ     0
-#define EXCP01_DB       1
-#define EXCP02_NMI      2
-#define EXCP03_INT3     3
-#define EXCP04_INTO     4
-#define EXCP05_BOUND    5
-#define EXCP06_ILLOP    6
-#define EXCP07_PREX     7
-#define EXCP08_DBLE     8
-#define EXCP09_XERR     9
-#define EXCP0A_TSS      10
-#define EXCP0B_NOSEG    11
-#define EXCP0C_STACK    12
-#define EXCP0D_GPF      13
-#define EXCP0E_PAGE     14
-#define EXCP10_COPR     16
-#define EXCP11_ALGN     17
-#define EXCP12_MCHK     18
+#ifndef HYPERV_SPINLOCK_NEVER_RETRY
+#define HYPERV_SPINLOCK_NEVER_RETRY             0xFFFFFFFF
+#endif
+
+#define EXCP00_DIVZ	0
+#define EXCP01_DB	1
+#define EXCP02_NMI	2
+#define EXCP03_INT3	3
+#define EXCP04_INTO	4
+#define EXCP05_BOUND	5
+#define EXCP06_ILLOP	6
+#define EXCP07_PREX	7
+#define EXCP08_DBLE	8
+#define EXCP09_XERR	9
+#define EXCP0A_TSS	10
+#define EXCP0B_NOSEG	11
+#define EXCP0C_STACK	12
+#define EXCP0D_GPF	13
+#define EXCP0E_PAGE	14
+#define EXCP10_COPR	16
+#define EXCP11_ALGN	17
+#define EXCP12_MCHK	18
 
 #define EXCP_SYSCALL    0x100 /* only happens in user only emulation
                                  for syscall instruction */
