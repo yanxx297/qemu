@@ -1310,31 +1310,11 @@ static void iscsi_close(BlockDriverState *bs)
     memset(iscsilun, 0, sizeof(IscsiLun));
 }
 
-static int iscsi_refresh_limits(BlockDriverState *bs)
+/* We have nothing to do for iSCSI reopen, stub just returns
+ * success */
+static int iscsi_reopen_prepare(BDRVReopenState *state,
+                                BlockReopenQueue *queue, Error **errp)
 {
-    IscsiLun *iscsilun = bs->opaque;
-
-    /* We don't actually refresh here, but just return data queried in
-     * iscsi_open(): iscsi targets don't change their limits. */
-    if (iscsilun->lbp.lbpu || iscsilun->lbp.lbpws) {
-        if (iscsilun->bl.max_unmap < 0xffffffff) {
-            bs->bl.max_discard = sector_lun2qemu(iscsilun->bl.max_unmap,
-                                                 iscsilun);
-        }
-        bs->bl.discard_alignment = sector_lun2qemu(iscsilun->bl.opt_unmap_gran,
-                                                   iscsilun);
-
-        if (iscsilun->bl.max_ws_len < 0xffffffff) {
-            bs->bl.max_write_zeroes = sector_lun2qemu(iscsilun->bl.max_ws_len,
-                                                      iscsilun);
-        }
-        bs->bl.write_zeroes_alignment = sector_lun2qemu(iscsilun->bl.opt_unmap_gran,
-                                                        iscsilun);
-
-        bs->bl.opt_transfer_length = sector_lun2qemu(iscsilun->bl.opt_xfer_len,
-                                                     iscsilun);
-    }
-
     return 0;
 }
 
@@ -1446,6 +1426,7 @@ static BlockDriver bdrv_iscsi = {
     .bdrv_close      = iscsi_close,
     .bdrv_create     = iscsi_create,
     .create_options  = iscsi_create_options,
+    .bdrv_reopen_prepare  = iscsi_reopen_prepare,
 
     .bdrv_getlength  = iscsi_getlength,
     .bdrv_get_info   = iscsi_get_info,
