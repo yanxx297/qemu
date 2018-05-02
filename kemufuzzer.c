@@ -16,7 +16,7 @@ typedef floatx80 CPU86_LDouble;
 typedef CPU_LDoubleU CPU86_LDoubleU;
 
 typedef struct {
-  CPUState *env;
+  CPUArchState *env;
   int initialized;
   int signalled;
 } t_kemufuzzer_state;
@@ -36,7 +36,7 @@ void fxsave_(uint8_t *);
 void fxrstor_(uint8_t *);
 void kemufuzzer_save(int, unsigned int, int);
 void kemufuzzer_sigusr2_handler(int);
-void kemufuzzer_init(CPUState*);
+void kemufuzzer_init(CPUArchState*);
 void kemufuzzer_exception(int, target_ulong, int);
 uint64_t kemufuzzer_rdmsr(uint32_t index);
 void kemufuzzer_wrmsr(uint32_t index, uint64_t val);
@@ -559,7 +559,7 @@ void kemufuzzer_hlt(void) {
 }
 }
 
-void kemufuzzer_init(CPUState *e) {
+void kemufuzzer_init(CPUArchState *e) {
   if (kemufuzzer_state.initialized) {
     /* Already initialized */
     return;
