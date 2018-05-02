@@ -789,6 +789,17 @@ static int parse_sandbox(QemuOpts *opts, void *opaque)
     return 0;
 }
 
+/*********QEMU USB setting******/
+bool usb_enabled(bool default_usb)
+{
+    QemuOpts *mach_opts;
+    mach_opts = qemu_opts_find(qemu_find_opts("machine"), 0);
+    if (mach_opts) {
+        return qemu_opt_get_bool(mach_opts, "usb", default_usb);
+    }
+    return default_usb;
+}
+
 #ifndef _WIN32
 static int parse_add_fd(QemuOpts *opts, void *opaque)
 {
@@ -860,16 +871,6 @@ static int cleanup_add_fd(QemuOpts *opts, void *opaque)
     return 0;
 }
 #endif
-/*********QEMU USB setting******/
-bool usb_enabled(bool default_usb)
-{
-    QemuOpts *mach_opts;
-    mach_opts = qemu_opts_find(qemu_find_opts("machine"), 0);
-    if (mach_opts) {
-        return qemu_opt_get_bool(mach_opts, "usb", default_usb);
-    }
-    return default_usb;
-}
 
 /***********************************************************/
 /* QEMU Block devices */
