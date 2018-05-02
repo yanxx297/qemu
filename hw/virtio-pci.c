@@ -1110,7 +1110,7 @@ static void virtio_blk_class_init(ObjectClass *klass, void *data)
     dc->props = virtio_blk_properties;
 }
 
-static TypeInfo virtio_blk_info = {
+static const TypeInfo virtio_blk_info = {
     .name          = "virtio-blk-pci",
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(VirtIOPCIProxy),
@@ -1144,7 +1144,7 @@ static void virtio_net_class_init(ObjectClass *klass, void *data)
     dc->props = virtio_net_properties;
 }
 
-static TypeInfo virtio_net_info = {
+static const TypeInfo virtio_net_info = {
     .name          = "virtio-net-pci",
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(VirtIOPCIProxy),
@@ -1175,7 +1175,7 @@ static void virtio_serial_class_init(ObjectClass *klass, void *data)
     dc->props = virtio_serial_properties;
 }
 
-static TypeInfo virtio_serial_info = {
+static const TypeInfo virtio_serial_info = {
     .name          = "virtio-serial-pci",
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(VirtIOPCIProxy),
@@ -1203,7 +1203,7 @@ static void virtio_balloon_class_init(ObjectClass *klass, void *data)
     dc->props = virtio_balloon_properties;
 }
 
-static TypeInfo virtio_balloon_info = {
+static const TypeInfo virtio_balloon_info = {
     .name          = "virtio-balloon-pci",
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(VirtIOPCIProxy),
@@ -1246,7 +1246,7 @@ static void virtio_rng_class_init(ObjectClass *klass, void *data)
     dc->props = virtio_rng_properties;
 }
 
-static TypeInfo virtio_rng_info = {
+static const TypeInfo virtio_rng_info = {
     .name          = "virtio-rng-pci",
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(VirtIOPCIProxy),
@@ -1304,7 +1304,7 @@ static void virtio_scsi_class_init(ObjectClass *klass, void *data)
     dc->props = virtio_scsi_properties;
 }
 
-static TypeInfo virtio_scsi_info = {
+static const TypeInfo virtio_scsi_info = {
     .name          = "virtio-scsi-pci",
     .parent        = TYPE_PCI_DEVICE,
     .instance_size = sizeof(VirtIOPCIProxy),
