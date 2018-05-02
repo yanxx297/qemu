@@ -3133,6 +3133,7 @@ void helper_rdpmc(void)
     helper_svm_check_intercept_param(SVM_EXIT_RDPMC, 0);
     
     /* currently unimplemented */
+    qemu_log_mask(LOG_UNIMP, "x86: unimplemented rdpmc\n");
     raise_exception_err(EXCP06_ILLOP, 0);
 }
 
