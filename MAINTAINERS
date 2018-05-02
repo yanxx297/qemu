@@ -375,6 +375,13 @@ F: hw/ppc_prep.c
 F: hw/prep_pci.[hc]
 F: hw/pc87312.[hc]
 
+sPAPR
+M: David Gibson <david@gibson.dropbear.id.au>
+M: Alexander Graf <agraf@suse.de>
+L: qemu-ppc@nongnu.org
+S: Supported
+F: hw/spapr*
+
 SH4 Machines
 ------------
 R2D
