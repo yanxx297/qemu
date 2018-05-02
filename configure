@@ -3532,6 +3532,7 @@ echo "virtio-blk-data-plane $virtio_blk_data_plane"
 echo "gcov              $gcov_tool"
 echo "gcov enabled      $gcov"
 echo "TPM support       $tpm"
+echo "libssh2 support   $libssh2"
 echo "TPM passthrough   $tpm_passthrough"
 
 if test "$sdl_too_old" = "yes"; then
