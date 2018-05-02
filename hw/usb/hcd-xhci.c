@@ -24,7 +24,7 @@
 #include "hw/pci/pci.h"
 #include "hw/pci/msi.h"
 #include "hw/pci/msix.h"
-#include "trace.h"
+#include "include/trace.h"
 
 //#define DEBUG_XHCI
 //#define DEBUG_DATA
