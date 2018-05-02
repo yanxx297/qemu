@@ -845,7 +845,7 @@ static int read_cpuinfo(const char *field, char *value, int len)
             break;
         }
         if (!strncmp(line, field, field_len)) {
-            strncpy(value, line, len);
+            pstrcpy(value, len, line);
             ret = 0;
             break;
         }
