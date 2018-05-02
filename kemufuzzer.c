@@ -375,7 +375,7 @@ uint64_t kemufuzzer_rdmsr(uint32_t index)
     val = kenv->sysenter_eip;
     break;
   case MSR_IA32_APICBASE:
-    val = cpu_get_apic_base(kenv->apic_state);
+    val = cpu_get_apic_base(x86_env_get_cpu(kenv)->apic_state);
     break;
   case MSR_EFER:
     val = kenv->efer;
