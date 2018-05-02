@@ -1521,12 +1521,6 @@ static inline void tcg_out_op(TCGContext *s, TCGOpcode opc,
         else
             tcg_out_callr(s, COND_AL, args[0]);
         break;
-    case INDEX_op_jmp:
-        if (const_args[0])
-            tcg_out_goto(s, COND_AL, args[0]);
-        else
-            tcg_out_bx(s, COND_AL, args[0]);
-        break;
     case INDEX_op_br:
         tcg_out_goto_label(s, COND_AL, args[0]);
         break;
@@ -1760,7 +1754,6 @@ static const TCGTargetOpDef arm_op_defs[] = {
     { INDEX_op_exit_tb, { } },
     { INDEX_op_goto_tb, { } },
     { INDEX_op_call, { "ri" } },
-    { INDEX_op_jmp, { "ri" } },
     { INDEX_op_br, { } },
 
     { INDEX_op_mov_i32, { "r", "r" } },
