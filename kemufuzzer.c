@@ -422,17 +422,17 @@ void kemufuzzer_wrmsr(CPUX86State *env, uint32_t index, uint64_t val)
     {
       uint64_t update_mask;
       update_mask = 0;
-      if (kenv->cpuid_ext2_features & CPUID_EXT2_SYSCALL)
+      if (kenv->features[FEAT_8000_0001_EDX] & CPUID_EXT2_SYSCALL)
 	update_mask |= MSR_EFER_SCE;
-      if (kenv->cpuid_ext2_features & CPUID_EXT2_LM)
+      if (kenv->features[FEAT_8000_0001_EDX] & CPUID_EXT2_LM)
 	update_mask |= MSR_EFER_LME;
-      if (kenv->cpuid_ext2_features & CPUID_EXT2_FFXSR)
+      if (kenv->features[FEAT_8000_0001_EDX] & CPUID_EXT2_FFXSR)
 	update_mask |= MSR_EFER_FFXSR;
-      if (kenv->cpuid_ext2_features & CPUID_EXT2_NX)
+      if (kenv->features[FEAT_8000_0001_EDX] & CPUID_EXT2_NX)
 	update_mask |= MSR_EFER_NXE;
-      if (kenv->cpuid_ext3_features & CPUID_EXT3_SVM)
+      if (kenv->features[FEAT_8000_0001_ECX] & CPUID_EXT3_SVM)
 	update_mask |= MSR_EFER_SVME;
-      if (kenv->cpuid_ext2_features & CPUID_EXT2_FFXSR)
+      if (kenv->features[FEAT_8000_0001_EDX] & CPUID_EXT2_FFXSR)
 	update_mask |= MSR_EFER_FFXSR;
       cpu_load_efer(kenv, (kenv->efer & ~update_mask) |
 		    (val & update_mask));
