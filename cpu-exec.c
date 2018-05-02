@@ -21,7 +21,7 @@
 #include "disas/disas.h"
 #include "tcg.h"
 #include "qemu/atomic.h"
-#include "qtest.h"
+#include "sysemu/qtest.h"
 
 #ifdef CONFIG_KEMUFUZZER
 #define EXPBIAS 16383
