@@ -1486,6 +1486,7 @@ static void test_io_interface(gconstpointer opaque)
 static void create_ahci_io_test(enum IOMode type, enum AddrMode addr,
                                 enum BuffLen len, enum OffsetType offset)
 {
+    static const char *arch;
     char *name;
     AHCIIOTestOptions *opts = g_malloc(sizeof(AHCIIOTestOptions));
 
@@ -1494,13 +1495,17 @@ static void create_ahci_io_test(enum IOMode type, enum AddrMode addr,
     opts->io_type = type;
     opts->offset = offset;
 
-    name = g_strdup_printf("ahci/io/%s/%s/%s/%s",
+    if (!arch) {
+        arch = qtest_get_arch();
+    }
+
+    name = g_strdup_printf("/%s/ahci/io/%s/%s/%s/%s", arch,
                            io_mode_str[type],
                            addr_mode_str[addr],
                            buff_len_str[len],
                            offset_str[offset]);
 
-    qtest_add_data_func(name, opts, test_io_interface);
+    g_test_add_data_func(name, opts, test_io_interface);
     g_free(name);
 }
 

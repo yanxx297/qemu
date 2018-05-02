@@ -68,8 +68,6 @@ check-unit-y += tests/test-bitops$(EXESUF)
 check-unit-$(CONFIG_HAS_GLIB_SUBPROCESS_TESTS) += tests/test-qdev-global-props$(EXESUF)
 check-unit-y += tests/check-qom-interface$(EXESUF)
 gcov-files-check-qom-interface-y = qom/object.c
-check-unit-y += tests/check-qom-proplist$(EXESUF)
-gcov-files-check-qom-proplist-y = qom/object.c
 check-unit-y += tests/test-qemu-opts$(EXESUF)
 gcov-files-test-qemu-opts-y = qom/test-qemu-opts.c
 check-unit-y += tests/test-write-threshold$(EXESUF)
@@ -269,7 +267,7 @@ test-qapi-obj-y = tests/test-qapi-visit.o tests/test-qapi-types.o \
 
 $(test-obj-y): QEMU_INCLUDES += -Itests
 QEMU_CFLAGS += -I$(SRC_PATH)/tests
-qom-core-obj = qom/object.o qom/qom-qobject.o qom/container.o qom/object_interfaces.o
+qom-core-obj = qom/object.o qom/qom-qobject.o qom/container.o
 
 tests/check-qint$(EXESUF): tests/check-qint.o libqemuutil.a
 tests/check-qstring$(EXESUF): tests/check-qstring.o libqemuutil.a
@@ -278,7 +276,6 @@ tests/check-qlist$(EXESUF): tests/check-qlist.o libqemuutil.a
 tests/check-qfloat$(EXESUF): tests/check-qfloat.o libqemuutil.a
 tests/check-qjson$(EXESUF): tests/check-qjson.o libqemuutil.a libqemustub.a
 tests/check-qom-interface$(EXESUF): tests/check-qom-interface.o $(qom-core-obj) libqemuutil.a libqemustub.a
-tests/check-qom-proplist$(EXESUF): tests/check-qom-proplist.o $(qom-core-obj) libqemuutil.a libqemustub.a
 tests/test-coroutine$(EXESUF): tests/test-coroutine.o $(block-obj-y) libqemuutil.a libqemustub.a
 tests/test-aio$(EXESUF): tests/test-aio.o $(block-obj-y) libqemuutil.a libqemustub.a
 tests/test-rfifolock$(EXESUF): tests/test-rfifolock.o libqemuutil.a libqemustub.a
@@ -374,7 +371,7 @@ tests/virtio-balloon-test$(EXESUF): tests/virtio-balloon-test.o
 tests/virtio-blk-test$(EXESUF): tests/virtio-blk-test.o $(libqos-virtio-obj-y)
 tests/virtio-net-test$(EXESUF): tests/virtio-net-test.o $(libqos-pc-obj-y)
 tests/virtio-rng-test$(EXESUF): tests/virtio-rng-test.o $(libqos-pc-obj-y)
-tests/virtio-scsi-test$(EXESUF): tests/virtio-scsi-test.o $(libqos-virtio-obj-y)
+tests/virtio-scsi-test$(EXESUF): tests/virtio-scsi-test.o
 tests/virtio-9p-test$(EXESUF): tests/virtio-9p-test.o
 tests/virtio-serial-test$(EXESUF): tests/virtio-serial-test.o
 tests/virtio-console-test$(EXESUF): tests/virtio-console-test.o

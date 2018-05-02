@@ -901,7 +901,7 @@ static void vhost_virtqueue_cleanup(struct vhost_virtqueue *vq)
 }
 
 int vhost_dev_init(struct vhost_dev *hdev, void *opaque,
-                   VhostBackendType backend_type, bool force)
+                   VhostBackendType backend_type)
 {
     uint64_t features;
     int i, r;
@@ -964,7 +964,6 @@ int vhost_dev_init(struct vhost_dev *hdev, void *opaque,
     hdev->started = false;
     hdev->memory_changed = false;
     memory_listener_register(&hdev->memory_listener, &address_space_memory);
-    hdev->force = force;
     return 0;
 fail_vq:
     while (--i >= 0) {
@@ -990,17 +989,6 @@ void vhost_dev_cleanup(struct vhost_dev *hdev)
     g_free(hdev->mem);
     g_free(hdev->mem_sections);
     hdev->vhost_ops->vhost_backend_cleanup(hdev);
-}
-
-bool vhost_dev_query(struct vhost_dev *hdev, VirtIODevice *vdev)
-{
-    BusState *qbus = BUS(qdev_get_parent_bus(DEVICE(vdev)));
-    VirtioBusState *vbus = VIRTIO_BUS(qbus);
-    VirtioBusClass *k = VIRTIO_BUS_GET_CLASS(vbus);
-
-    return !k->query_guest_notifiers ||
-           k->query_guest_notifiers(qbus->parent) ||
-           hdev->force;
 }
 
 /* Stop processing guest IO notifications in qemu.
@@ -1068,7 +1056,6 @@ void vhost_dev_disable_notifiers(struct vhost_dev *hdev, VirtIODevice *vdev)
 bool vhost_virtqueue_pending(struct vhost_dev *hdev, int n)
 {
     struct vhost_virtqueue *vq = hdev->vqs + n - hdev->vq_index;
-    assert(hdev->started);
     assert(n >= hdev->vq_index && n < hdev->vq_index + hdev->nvqs);
     return event_notifier_test_and_clear(&vq->masked_notifier);
 }
@@ -1080,7 +1067,6 @@ void vhost_virtqueue_mask(struct vhost_dev *hdev, VirtIODevice *vdev, int n,
     struct VirtQueue *vvq = virtio_get_queue(vdev, n);
     int r, index = n - hdev->vq_index;
 
-    assert(hdev->started);
     assert(n >= hdev->vq_index && n < hdev->vq_index + hdev->nvqs);
 
     struct vhost_vring_file file = {

@@ -241,7 +241,6 @@ static int cocoa_keycode_to_qemu(int keycode)
 }
 
 
-
 /*
  ------------------------------------------------------
     QemuCocoaView
