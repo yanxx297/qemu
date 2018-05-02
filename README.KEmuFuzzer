@@ -1,0 +1,1 @@
+./configure --disable-linux-user --disable-darwin-user --target-list=i386-softmmu --enable-kemufuzzer --disable-kvm
