@@ -515,6 +515,10 @@ int kvm_arch_init_vcpu(CPUState *env)
         }
     }
 
+    if (kvm_has_xsave()) {
+        env->kvm_xsave_buf = qemu_memalign(4096, sizeof(struct kvm_xsave));
+    }
+
     return 0;
 }
 
@@ -770,15 +774,14 @@ static int kvm_put_fpu(CPUState *env)
 
 static int kvm_put_xsave(CPUState *env)
 {
-    int i, r;
-    struct kvm_xsave* xsave;
+    struct kvm_xsave* xsave = env->kvm_xsave_buf;
     uint16_t cwd, swd, twd;
+    int i, r;
 
     if (!kvm_has_xsave()) {
         return kvm_put_fpu(env);
     }
 
-    xsave = qemu_memalign(4096, sizeof(struct kvm_xsave));
     memset(xsave, 0, sizeof(struct kvm_xsave));
     twd = 0;
     swd = env->fpus & ~(7 << 11);
@@ -800,7 +803,6 @@ static int kvm_put_xsave(CPUState *env)
     memcpy(&xsave->region[XSAVE_YMMH_SPACE], env->ymmh_regs,
             sizeof env->ymmh_regs);
     r = kvm_vcpu_ioctl(env, KVM_SET_XSAVE, xsave);
-    g_free(xsave);
     return r;
 }
 
@@ -977,7 +979,7 @@ static int kvm_get_fpu(CPUState *env)
 
 static int kvm_get_xsave(CPUState *env)
 {
-    struct kvm_xsave* xsave;
+    struct kvm_xsave* xsave = env->kvm_xsave_buf;
     int ret, i;
     uint16_t cwd, swd, twd;
 
@@ -985,10 +987,8 @@ static int kvm_get_xsave(CPUState *env)
         return kvm_get_fpu(env);
     }
 
-    xsave = qemu_memalign(4096, sizeof(struct kvm_xsave));
     ret = kvm_vcpu_ioctl(env, KVM_GET_XSAVE, xsave);
     if (ret < 0) {
-        g_free(xsave);
         return ret;
     }
 
@@ -1012,7 +1012,6 @@ static int kvm_get_xsave(CPUState *env)
     env->xstate_bv = *(uint64_t *)&xsave->region[XSAVE_XSTATE_BV];
     memcpy(env->ymmh_regs, &xsave->region[XSAVE_YMMH_SPACE],
             sizeof env->ymmh_regs);
-    g_free(xsave);
     return 0;
 }
 
