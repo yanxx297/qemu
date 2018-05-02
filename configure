@@ -5903,6 +5903,7 @@ case "$target_name" in
     TARGET_BASE_ARCH=i386
   ;;
   alpha)
+    mttcg="yes"
   ;;
   arm|armeb)
     TARGET_ARCH=arm
