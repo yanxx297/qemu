@@ -3792,3 +3792,6 @@
 # Since: 2.1
 ##
 { 'command': 'rtc-reset-reinjection' }
+
+# Rocker ethernet network switch
+{ 'include': 'qapi/rocker.json' }
