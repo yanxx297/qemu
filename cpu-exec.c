@@ -21,6 +21,7 @@
 #include "disas.h"
 #include "tcg.h"
 #include "qemu-barrier.h"
+#include "qtest.h"
 
 #ifdef CONFIG_KEMUFUZZER
 #define EXPBIAS 16383
