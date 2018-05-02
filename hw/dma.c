@@ -200,7 +200,7 @@ static void write_cont(void *opaque, hwaddr nport, uint64_t data,
 
     iport = (nport >> d->dshift) & 0x0f;
     switch (iport) {
-    case 0x01:                  /* command */
+    case 0x00:                  /* command */
         if ((data != 0) && (data & CMD_NOT_SUPPORTED)) {
             dolog("command %"PRIx64" not supported\n", data);
             return;
@@ -208,7 +208,7 @@ static void write_cont(void *opaque, hwaddr nport, uint64_t data,
         d->command = data;
         break;
 
-    case 0x02:
+    case 0x01:
         ichan = data & 3;
         if (data & 4) {
             d->status |= 1 << (ichan + 4);
@@ -220,7 +220,7 @@ static void write_cont(void *opaque, hwaddr nport, uint64_t data,
         DMA_run();
         break;
 
-    case 0x03:                  /* single mask */
+    case 0x02:                  /* single mask */
         if (data & 4)
             d->mask |= 1 << (data & 3);
         else
@@ -228,7 +228,7 @@ static void write_cont(void *opaque, hwaddr nport, uint64_t data,
         DMA_run();
         break;
 
-    case 0x04:                  /* mode */
+    case 0x03:                  /* mode */
         {
             ichan = data & 3;
 #ifdef DEBUG_DMA
@@ -247,23 +247,23 @@ static void write_cont(void *opaque, hwaddr nport, uint64_t data,
             break;
         }
 
-    case 0x05:                  /* clear flip flop */
+    case 0x04:                  /* clear flip flop */
         d->flip_flop = 0;
         break;
 
-    case 0x06:                  /* reset */
+    case 0x05:                  /* reset */
         d->flip_flop = 0;
         d->mask = ~0;
         d->status = 0;
         d->command = 0;
         break;
 
-    case 0x07:                  /* clear mask for all channels */
+    case 0x06:                  /* clear mask for all channels */
         d->mask = 0;
         DMA_run();
         break;
 
-    case 0x08:                  /* write mask for all channels */
+    case 0x07:                  /* write mask for all channels */
         d->mask = data;
         DMA_run();
         break;
@@ -288,11 +288,11 @@ static uint64_t read_cont(void *opaque, hwaddr nport, unsigned size)
 
     iport = (nport >> d->dshift) & 0x0f;
     switch (iport) {
-    case 0x08:                  /* status */
+    case 0x00:                  /* status */
         val = d->status;
         d->status &= 0xf0;
         break;
-    case 0x0f:                  /* mask */
+    case 0x01:                  /* mask */
         val = d->mask;
         break;
     default:
@@ -467,7 +467,7 @@ void DMA_schedule(int nchan)
 static void dma_reset(void *opaque)
 {
     struct dma_cont *d = opaque;
-    write_cont(d, (0x06 << d->dshift), 0, 1);
+    write_cont(d, (0x05 << d->dshift), 0, 1);
 }
 
 static int dma_phony_handler (void *opaque, int nchan, int dma_pos, int dma_len)
