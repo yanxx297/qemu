@@ -408,6 +408,7 @@ int cpu_exec(CPUArchState *env)
 #elif defined(TARGET_CRIS)
 #elif defined(TARGET_S390X)
 #elif defined(TARGET_XTENSA)
+#elif defined(TARGET_TRICORE)
     /* XXXXX */
 #else
 #error unsupported target CPU
@@ -471,7 +472,8 @@ int cpu_exec(CPUArchState *env)
                     }
 #if defined(TARGET_ARM) || defined(TARGET_SPARC) || defined(TARGET_MIPS) || \
     defined(TARGET_PPC) || defined(TARGET_ALPHA) || defined(TARGET_CRIS) || \
-    defined(TARGET_MICROBLAZE) || defined(TARGET_LM32) || defined(TARGET_UNICORE32)
+    defined(TARGET_MICROBLAZE) || defined(TARGET_LM32) ||                   \
+    defined(TARGET_UNICORE32) || defined(TARGET_TRICORE)
                     if (interrupt_request & CPU_INTERRUPT_HALT) {
                         cpu->interrupt_request &= ~CPU_INTERRUPT_HALT;
                         cpu->halted = 1;
@@ -587,6 +589,12 @@ int cpu_exec(CPUArchState *env)
                         cc->do_interrupt(cpu);
                         next_tb = 0;
                     }
+#elif defined(TARGET_TRICORE)
+                    if ((interrupt_request & CPU_INTERRUPT_HARD)) {
+                        cc->do_interrupt(cpu);
+                        next_tb = 0;
+                    }
+
 #elif defined(TARGET_OPENRISC)
                     {
                         int idx = -1;
@@ -873,6 +881,7 @@ int cpu_exec(CPUArchState *env)
               | env->cc_dest | (env->cc_x << 4);
 #elif defined(TARGET_MICROBLAZE)
 #elif defined(TARGET_MIPS)
+#elif defined(TARGET_TRICORE)
 #elif defined(TARGET_MOXIE)
 #elif defined(TARGET_OPENRISC)
 #elif defined(TARGET_SH4)
