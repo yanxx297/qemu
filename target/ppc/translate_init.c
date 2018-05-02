@@ -10604,8 +10604,11 @@ static void ppc_cpu_class_init(ObjectClass *oc, void *data)
 #ifndef CONFIG_USER_ONLY
     cc->virtio_is_big_endian = ppc_cpu_is_big_endian;
 #endif
+#ifdef CONFIG_TCG
+    cc->tcg_initialize = ppc_translate_init;
+#endif
     cc->disas_set_info = ppc_disas_set_info;
-
+ 
     dc->fw_name = "PowerPC,UNKNOWN";
 }
 
