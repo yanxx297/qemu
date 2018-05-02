@@ -281,7 +281,7 @@ void kemufuzzer_save(CPUX86State *env, int t, unsigned int eip, int e) {
   s.regs_state.rbp = kenv->regs[R_EBP];
 
   s.regs_state.rflags = cpu_cc_compute_all(env, CC_OP) |	\
-    (DF & DF_MASK) |					\
+    (kenv->df & DF_MASK) |					\
     kenv->eflags;
 
   s.regs_state.rip = eip;
