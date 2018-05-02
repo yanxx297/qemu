@@ -28,7 +28,6 @@
 #define EXPD(fp)        (fp.l.upper & 0x7fff)
 #define SIGND(fp)       ((fp.l.upper) & 0x8000)
 #define MANTD(fp)       (fp.l.lower)  
-#include "dyngen-exec.h"
 #include "kemufuzzer.c"
 #endif
 
