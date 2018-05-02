@@ -26,7 +26,7 @@
 #include "isa.h"
 #include "fw_cfg.h"
 #include "sysbus.h"
-#include "trace.h"
+#include "include/trace.h"
 #include "qemu/error-report.h"
 #include "qemu/config-file.h"
 
