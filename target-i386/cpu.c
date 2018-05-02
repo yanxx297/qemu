@@ -2152,18 +2152,13 @@ CPUX86State *cpu_x86_init_user(const char *cpu_model)
 
     object_property_set_bool(OBJECT(cpu), true, "realized", &error);
     if (error) {
-        error_report_err(error);
-        if (cpu != NULL) {
-            object_unref(OBJECT(cpu));
-            cpu = NULL;
-        }
+        goto error;
     }
 
     return &cpu->env;
 
 error:
-    error_report("%s", error_get_pretty(error));
-    error_free(error);
+    error_report_err(error);
     if (cpu != NULL) {
         object_unref(OBJECT(cpu));
     }
