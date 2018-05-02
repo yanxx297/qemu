@@ -32,15 +32,15 @@ inline uint32_t ldl_(uint8_t *);
 inline uint64_t ldq_(uint8_t *);
 inline CPU86_LDouble fldt_(target_ulong);
 
-void fxsave_(uint8_t *);
-void fxrstor_(uint8_t *);
-void kemufuzzer_save(int, unsigned int, int);
+void fxsave_(CPUX86State *env, uint8_t *);
+void fxrstor_(CPUX86State *env, uint8_t *);
+void kemufuzzer_save(CPUX86State *env, int, unsigned int, int);
 void kemufuzzer_sigusr2_handler(int);
 void kemufuzzer_init(CPUArchState*);
-void kemufuzzer_exception(int, target_ulong, int);
+void kemufuzzer_exception(CPUX86State *env, int, target_ulong, int);
 uint64_t kemufuzzer_rdmsr(uint32_t index);
-void kemufuzzer_wrmsr(uint32_t index, uint64_t val);
-void kemufuzzer_hlt(void);
+void kemufuzzer_wrmsr(CPUX86State *env, uint32_t index, uint64_t val);
+void kemufuzzer_hlt(CPUX86State *env);
 
 static t_kemufuzzer_state kemufuzzer_state = {
   .env = NULL, 
@@ -116,7 +116,7 @@ inline uint64_t ldq_(uint8_t *dst) {
   return *(uint64_t*)dst;
 }
 
-void fxsave_(uint8_t *ptr) {
+void fxsave_(CPUX86State *env, uint8_t *ptr) {
     int fpus, fptag, i, nb_xmm_regs;
     CPU86_LDouble tmp;
     uint8_t *addr;
@@ -174,7 +174,7 @@ inline CPU86_LDouble fldt_(target_ulong ptr)
     return temp.d;
 }
 
-void fxrstor_(uint8_t *ptr)
+void fxrstor_(CPUX86State *env, uint8_t *ptr)
 {
   int i, fpus, fptag, nb_xmm_regs;
   CPU86_LDouble tmp;
@@ -220,7 +220,7 @@ void fxrstor_(uint8_t *ptr)
 }
 
 
-void kemufuzzer_save(int t, unsigned int eip, int e) {
+void kemufuzzer_save(CPUX86State *env, int t, unsigned int eip, int e) {
   header_t h;
   cpu_state_t s;
   char outfile[PATH_MAX], tempfile[PATH_MAX];
@@ -328,7 +328,7 @@ void kemufuzzer_save(int t, unsigned int eip, int e) {
   s.exception_state.error_code = 0;
 
   // Fpu
-  fxsave_((uint8_t *) &s.fpu_state);
+  fxsave_(env, (uint8_t *) &s.fpu_state);
 
   // Dump MSR registers
   s.msrs_state.n = sizeof(MSRs_to_save)/sizeof(int);
@@ -403,7 +403,7 @@ uint64_t kemufuzzer_rdmsr(uint32_t index)
   return val;
 }
 
-void kemufuzzer_wrmsr(uint32_t index, uint64_t val)
+void kemufuzzer_wrmsr(CPUX86State *env, uint32_t index, uint64_t val)
 {
   switch(index) {
   case MSR_IA32_SYSENTER_CS:
@@ -530,14 +530,14 @@ void kemufuzzer_wrmsr(uint32_t index, uint64_t val)
 }
 
 
-void kemufuzzer_exception(int e, target_ulong nexteip, int isint) {
+void kemufuzzer_exception(CPUX86State *env, int e, target_ulong nexteip, int isint) {
   if (e == KEMUFUZZER_HYPERCALL_START_TESTCASE || kemufuzzer_state.signalled)
     printf("Exception %x @ %.8x\n", e, nexteip);
 
   if (kemufuzzer_state.signalled == 0 && 
       e == KEMUFUZZER_HYPERCALL_START_TESTCASE) {
     // Dump the state
-    kemufuzzer_save(KEMUFUZZER_PRE_STATE, nexteip, EXCEPTION_NONE);
+    kemufuzzer_save(env, KEMUFUZZER_PRE_STATE, nexteip, EXCEPTION_NONE);
     kemufuzzer_state.signalled = 1;
     // Force QEMU to ignore the interrupt
     kenv->eip = nexteip;
@@ -545,16 +545,16 @@ void kemufuzzer_exception(int e, target_ulong nexteip, int isint) {
     kenv->exception_index = -1;
     longjmp(kenv->jmp_env, 1);
   } else if (!isint && kemufuzzer_state.signalled >= 1) {
-//    kemufuzzer_save(KEMUFUZZER_POST_STATE, kenv->eip, e);
+//    kemufuzzer_save(env, KEMUFUZZER_POST_STATE, kenv->eip, e);
 //    exit(0);
   }
 }
 
 
-void kemufuzzer_hlt(void) {
+void kemufuzzer_hlt(CPUX86State *env) {
   if (kemufuzzer_state.signalled >= 1) {
 	  printf("CPU HALTED\n");
-	  kemufuzzer_save(KEMUFUZZER_POST_STATE, kenv->eip - 1, EXCEPTION_NONE);
+	  kemufuzzer_save(env, KEMUFUZZER_POST_STATE, kenv->eip - 1, EXCEPTION_NONE);
 	  exit(0);
 }
 }

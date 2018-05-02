@@ -250,7 +250,7 @@ int cpu_exec(CPUArchState *env)
     for(;;) {
         if (setjmp(env->jmp_env) == 0) {
            if (env->exception_index == EXCP_HLT) {
-                    kemufuzzer_hlt();
+                    kemufuzzer_hlt(env);
             } 
             /* if an exception is pending, we execute it here */
             if (env->exception_index >= 0) {
@@ -272,7 +272,7 @@ int cpu_exec(CPUArchState *env)
                     ret = env->exception_index;
                     break;
 #else
-                    kemufuzzer_exception(env->exception_index,
+                    kemufuzzer_exception(env, env->exception_index,
                                     env->exception_next_eip,
                                     env->exception_is_int);                    
                     do_interrupt(env);
