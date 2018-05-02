@@ -24,7 +24,7 @@
 
 #include "qemu-option.h"
 #include "qemu-config.h"
-#include "monitor.h"
+#include "monitor/monitor.h"
 
 extern int using_spice;
 
@@ -51,7 +51,7 @@ void qemu_spice_register_ports(void);
 #endif
 
 #else  /* CONFIG_SPICE */
-#include "monitor.h"
+#include "monitor/monitor.h"
 
 #define using_spice 0
 static inline int qemu_spice_set_passwd(const char *passwd,
