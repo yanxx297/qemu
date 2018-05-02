@@ -2108,18 +2108,13 @@ QEMU supports using either local sheepdog devices or remote networked
 devices.
 
 Syntax for specifying a sheepdog device
-@table @code
-@item sheepdog:<vdiname>
-@item sheepdog:<vdiname>:<snapid>
-@item sheepdog:<vdiname>:<tag>
-@item sheepdog:<host>:<port>:<vdiname>
-@item sheepdog:<host>:<port>:<vdiname>:<snapid>
-@item sheepdog:<host>:<port>:<vdiname>:<tag>
-@end table
+@example
+sheepdog[+tcp]://[host:port]/vdiname[#snapid|#tag]
+@end example
 
 Example
 @example
-qemu-system-i386 --drive file=sheepdog:192.0.2.1:30000:MyVirtualMachine
+qemu-system-i386 --drive file=sheepdog://192.0.2.1:30000/MyVirtualMachine
 @end example
 
 See also @url{http://http://www.osrg.net/sheepdog/}.
