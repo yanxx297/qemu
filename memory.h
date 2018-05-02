@@ -71,6 +71,13 @@ struct MemoryRegionOps {
          * accesses throw machine checks.
          */
          bool unaligned;
+        /*
+         * If present, and returns #false, the transaction is not accepted
+         * by the device (and results in machine dependent behaviour such
+         * as a machine check exception).
+         */
+        bool (*accepts)(void *opaque, target_phys_addr_t addr,
+                        unsigned size, bool is_write);
     } valid;
     /* Internal implementation constraints: */
     struct {
@@ -116,6 +123,7 @@ struct MemoryRegion {
     bool terminates;
     bool readable;
     bool readonly; /* For RAM regions */
+    bool enabled;
     MemoryRegion *alias;
     target_phys_addr_t alias_offset;
     unsigned priority;
@@ -493,6 +501,22 @@ void memory_region_add_subregion_overlap(MemoryRegion *mr,
  */
 void memory_region_del_subregion(MemoryRegion *mr,
                                  MemoryRegion *subregion);
+
+
+/*
+ * memory_region_set_enabled: dynamically enable or disable a region
+ *
+ * Enables or disables a memory region.  A disabled memory region
+ * ignores all accesses to itself and its subregions.  It does not
+ * obscure sibling subregions with lower priority - it simply behaves as
+ * if it was removed from the hierarchy.
+ *
+ * Regions default to being enabled.
+ *
+ * @mr: the region to be updated
+ * @enabled: whether to enable or disable the region
+ */
+void memory_region_set_enabled(MemoryRegion *mr, bool enabled);
 
 /* Start a transaction; changes will be accumulated and made visible only
  * when the transaction ends.
