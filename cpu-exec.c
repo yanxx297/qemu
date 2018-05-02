@@ -244,6 +244,8 @@ int cpu_exec(CPUArchState *env)
     TranslationBlock *tb;
     uint8_t *tc_ptr;
     uintptr_t next_tb;
+    /* This must be volatile so it is not trashed by longjmp() */
+    volatile bool have_tb_lock = false;
 
 #ifdef CONFIG_KEMUFUZZER
     kemufuzzer_init(env);
@@ -627,6 +629,7 @@ int cpu_exec(CPUArchState *env)
                     cpu_loop_exit(cpu);
                 }
                 spin_lock(&tcg_ctx.tb_ctx.tb_lock);
+                have_tb_lock = true;
                 tb = tb_find_fast(env);
                 /* Note: we do it here to avoid a gcc bug on Mac OS X when
                    doing it in tb_find_slow */
@@ -648,6 +651,7 @@ int cpu_exec(CPUArchState *env)
                     tb_add_jump((TranslationBlock *)(next_tb & ~TB_EXIT_MASK),
                                 next_tb & TB_EXIT_MASK, tb);
                 }
+                have_tb_lock = false;
                 spin_unlock(&tcg_ctx.tb_ctx.tb_lock);
 
                 /* cpu_interrupt might be called while translating the
@@ -719,6 +723,10 @@ int cpu_exec(CPUArchState *env)
 #ifdef TARGET_I386
             x86_cpu = X86_CPU(cpu);
 #endif
+            if (have_tb_lock) {
+                spin_unlock(&tcg_ctx.tb_ctx.tb_lock);
+                have_tb_lock = false;
+            }
         }
     } /* for(;;) */
 
