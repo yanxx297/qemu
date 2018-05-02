@@ -6,7 +6,6 @@ floppy="$1"
 out="$2"
 tmp="$3"
 
-cp $floppy /tmp/floppy-dbg
 if [ "$floppy" = "" -o "$out" = "" ]
 then
     echo "Invalid argument(s)"
@@ -26,7 +25,7 @@ export KEMUFUZZER_PRE_STATE="$pre"
 export KEMUFUZZER_POST_STATE="$post"
 export KEMUFUZZER_TESTCASE_CHECKSUM="no checksum"
 
-$here/i386-softmmu/qemu-system-i386 -S -s -m 4 -d in_asm,cpu -fda "$floppy" -display none $4 
+$here/i386-softmmu/qemu-system-i386 -S -s -m 4 -fda "$floppy" -display none $4 
 ret=$?
 if [ $ret -eq 0 ]
 then
