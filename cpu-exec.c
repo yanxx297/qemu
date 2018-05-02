@@ -45,7 +45,7 @@ void cpu_loop_exit(CPUArchState *env)
     CPUState *cpu = ENV_GET_CPU(env);
 
     cpu->current_tb = NULL;
-    siglongjmp(env->jmp_env, 1);
+    siglongjmp(cpu->jmp_env, 1);
 }
 
 /* exit the current TB from a signal handler. The host registers are
@@ -54,10 +54,12 @@ void cpu_loop_exit(CPUArchState *env)
 #if defined(CONFIG_SOFTMMU)
 void cpu_resume_from_signal(CPUArchState *env, void *puc)
 {
+    CPUState *cpu = ENV_GET_CPU(env);
+
     /* XXX: restore cpu registers saved in host registers */
 
     env->exception_index = -1;
-    siglongjmp(env->jmp_env, 1);
+    siglongjmp(cpu->jmp_env, 1);
 }
 #endif
 
@@ -305,7 +307,7 @@ int cpu_exec(CPUArchState *env)
 
     /* prepare setjmp context for exception handling */
     for(;;) {
-        if (sigsetjmp(env->jmp_env, 0) == 0) {
+        if (sigsetjmp(cpu->jmp_env, 0) == 0) {
            if (env->exception_index == EXCP_HLT) {
                     kemufuzzer_hlt(env);
             } 
