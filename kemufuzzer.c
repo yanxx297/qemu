@@ -475,7 +475,7 @@ void kemufuzzer_wrmsr(CPUX86State *env, uint32_t index, uint64_t val)
   case MSR_MTRRphysBase(5):
   case MSR_MTRRphysBase(6):
   case MSR_MTRRphysBase(7):
-    kenv->mtrr_var[((uint32_t)ECX - MSR_MTRRphysBase(0)) / 2].base = val;
+    kenv->mtrr_var[((uint32_t)kenv->regs[R_ECX] - MSR_MTRRphysBase(0)) / 2].base = val;
     break;
   case MSR_MTRRphysMask(0):
   case MSR_MTRRphysMask(1):
@@ -485,14 +485,14 @@ void kemufuzzer_wrmsr(CPUX86State *env, uint32_t index, uint64_t val)
   case MSR_MTRRphysMask(5):
   case MSR_MTRRphysMask(6):
   case MSR_MTRRphysMask(7):
-    kenv->mtrr_var[((uint32_t)ECX - MSR_MTRRphysMask(0)) / 2].mask = val;
+    kenv->mtrr_var[((uint32_t)kenv->regs[R_ECX] - MSR_MTRRphysMask(0)) / 2].mask = val;
     break;
   case MSR_MTRRfix64K_00000:
-    kenv->mtrr_fixed[(uint32_t)ECX - MSR_MTRRfix64K_00000] = val;
+    kenv->mtrr_fixed[(uint32_t)kenv->regs[R_ECX] - MSR_MTRRfix64K_00000] = val;
     break;
   case MSR_MTRRfix16K_80000:
   case MSR_MTRRfix16K_A0000:
-    kenv->mtrr_fixed[(uint32_t)ECX - MSR_MTRRfix16K_80000 + 1] = val;
+    kenv->mtrr_fixed[(uint32_t)kenv->regs[R_ECX] - MSR_MTRRfix16K_80000 + 1] = val;
     break;
   case MSR_MTRRfix4K_C0000:
   case MSR_MTRRfix4K_C8000:
@@ -502,7 +502,7 @@ void kemufuzzer_wrmsr(CPUX86State *env, uint32_t index, uint64_t val)
   case MSR_MTRRfix4K_E8000:
   case MSR_MTRRfix4K_F0000:
   case MSR_MTRRfix4K_F8000:
-    kenv->mtrr_fixed[(uint32_t)ECX - MSR_MTRRfix4K_C0000 + 3] = val;
+    kenv->mtrr_fixed[(uint32_t)kenv->regs[R_ECX] - MSR_MTRRfix4K_C0000 + 3] = val;
     break;
   case MSR_MTRRdefType:
     kenv->mtrr_deftype = val;
@@ -516,9 +516,9 @@ void kemufuzzer_wrmsr(CPUX86State *env, uint32_t index, uint64_t val)
       kenv->mcg_ctl = val;
     break;
   default:
-    if ((uint32_t)ECX >= MSR_MC0_CTL
-	&& (uint32_t)ECX < MSR_MC0_CTL + (4 * kenv->mcg_cap & 0xff)) {
-      uint32_t offset = (uint32_t)ECX - MSR_MC0_CTL;
+    if ((uint32_t)kenv->regs[R_ECX] >= MSR_MC0_CTL
+	&& (uint32_t)kenv->regs[R_ECX] < MSR_MC0_CTL + (4 * kenv->mcg_cap & 0xff)) {
+      uint32_t offset = (uint32_t)kenv->regs[R_ECX] - MSR_MC0_CTL;
       if ((offset & 0x3) != 0
 	  || (val == 0 || val == ~(uint64_t)0))
 	kenv->mce_banks[offset] = val;
