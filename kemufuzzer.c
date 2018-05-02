@@ -280,7 +280,7 @@ void kemufuzzer_save(int t, unsigned int eip, int e) {
   s.regs_state.rsp = kenv->regs[R_ESP];
   s.regs_state.rbp = kenv->regs[R_EBP];
 
-  s.regs_state.rflags = helper_cc_compute_all(CC_OP) |	\
+  s.regs_state.rflags = cpu_cc_compute_all(env, CC_OP) |	\
     (DF & DF_MASK) |					\
     kenv->eflags;
 
