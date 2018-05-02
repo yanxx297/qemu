@@ -676,7 +676,7 @@ int cpu_exec(CPUArchState *env)
                         /* Instruction counter expired.  */
                         int insns_left;
                         tb = (TranslationBlock *)(next_tb & ~TB_EXIT_MASK);
-                        insns_left = env->icount_decr.u32;
+                        insns_left = cpu->icount_decr.u32;
                         if (cpu->icount_extra && insns_left >= 0) {
                             /* Refill decrementer and continue execution.  */
                             cpu->icount_extra += insns_left;
@@ -686,7 +686,7 @@ int cpu_exec(CPUArchState *env)
                                 insns_left = cpu->icount_extra;
                             }
                             cpu->icount_extra -= insns_left;
-                            env->icount_decr.u16.low = insns_left;
+                            cpu->icount_decr.u16.low = insns_left;
                         } else {
                             if (insns_left > 0) {
                                 /* Execute remaining instructions.  */
