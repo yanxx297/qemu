@@ -1674,6 +1674,7 @@ fi
 # xfsctl() probe, used for raw-posix
 if test "$xfs" != "no" ; then
   cat > $TMPC << EOF
+#include <stddef.h>  /* NULL */
 #include <xfs/xfs.h>
 int main(void)
 {
