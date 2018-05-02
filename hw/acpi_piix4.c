@@ -391,7 +391,7 @@ static int piix4_pm_initfn(PCIDevice *dev)
     pci_conf[0x3d] = 0x01; // interrupt pin 1
 
     /* APM */
-    apm_init(&s->apm, apm_ctrl_changed, s);
+    apm_init(dev, &s->apm, apm_ctrl_changed, s);
 
     if (s->kvm_enabled) {
         /* Mark SMM as already inited to prevent SMM from running.  KVM does not

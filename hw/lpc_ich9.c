@@ -497,11 +497,7 @@ static int ich9_lpc_initfn(PCIDevice *d)
     lpc->isa_bus = isa_bus;
 
     ich9_cc_init(lpc);
-    apm_init(&lpc->apm, ich9_apm_ctrl_changed, lpc);
-
-    lpc->machine_ready.notify = ich9_lpc_machine_ready;
-    qemu_add_machine_init_done_notifier(&lpc->machine_ready);
-
+    apm_init(d, &lpc->apm, ich9_apm_ctrl_changed, lpc);
     return 0;
 }
 
