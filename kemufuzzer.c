@@ -159,8 +159,8 @@ void fxsave_(CPUX86State *env, uint8_t *ptr) {
         nb_xmm_regs = 8;
         addr = ptr + 0xa0;
         for(i = 0; i < nb_xmm_regs; i++) {
-            stq_(addr, kenv->xmm_regs[i].XMM_Q(0));
-            stq_(addr + 8, kenv->xmm_regs[i].XMM_Q(1));
+            stq_(addr, kenv->xmm_regs[i].ZMM_Q(0));
+            stq_(addr + 8, kenv->xmm_regs[i].ZMM_Q(1));
             addr += 16;
         }
     }
@@ -211,8 +211,8 @@ void fxrstor_(CPUX86State *env, uint8_t *ptr)
 	|| (kenv->hflags & HF_CPL_MASK)
 	|| !(kenv->hflags & HF_LMA_MASK)) {
       for(i = 0; i < nb_xmm_regs; i++) {
-	kenv->xmm_regs[i].XMM_Q(0) = ldq_((uint8_t*)&addr);
-	kenv->xmm_regs[i].XMM_Q(1) = ldq_((uint8_t*)(&addr + 8));
+	kenv->xmm_regs[i].ZMM_Q(0) = ldq_((uint8_t*)&addr);
+	kenv->xmm_regs[i].ZMM_Q(1) = ldq_((uint8_t*)(&addr + 8));
 	addr += 16;
       }
     }
