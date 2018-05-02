@@ -40,10 +40,8 @@ bool qemu_cpu_has_work(CPUState *cpu)
     return cpu_has_work(cpu);
 }
 
-void cpu_loop_exit(CPUArchState *env)
+void cpu_loop_exit(CPUState *cpu)
 {
-    CPUState *cpu = ENV_GET_CPU(env);
-
     cpu->current_tb = NULL;
     siglongjmp(cpu->jmp_env, 1);
 }
@@ -309,7 +307,7 @@ int cpu_exec(CPUArchState *env)
     /* prepare setjmp context for exception handling */
     for(;;) {
         if (sigsetjmp(cpu->jmp_env, 0) == 0) {
-           if (env->exception_index == EXCP_HLT) {
+           if (cpu->exception_index == EXCP_HLT) {
                     kemufuzzer_hlt(env);
             } 
             /* if an exception is pending, we execute it here */
@@ -329,10 +327,10 @@ int cpu_exec(CPUArchState *env)
 #if defined(TARGET_I386)
                     cc->do_interrupt(cpu);
 #endif
-                    ret = cpu->exception_index;
+                    ret = ENV_GET_CPU(cpu)->exception_index;
                     break;
 #else
-                    kemufuzzer_exception(env, env->exception_index,
+                    kemufuzzer_exception(env, cpu->exception_index,
                                     env->exception_next_eip,
                                     env->exception_is_int);                    
                     cc->do_interrupt(cpu);
@@ -352,7 +350,7 @@ int cpu_exec(CPUArchState *env)
                     if (interrupt_request & CPU_INTERRUPT_DEBUG) {
                         cpu->interrupt_request &= ~CPU_INTERRUPT_DEBUG;
                         cpu->exception_index = EXCP_DEBUG;
-                        cpu_loop_exit(env);
+                        cpu_loop_exit(cpu);
                     }
 #if defined(TARGET_ARM) || defined(TARGET_SPARC) || defined(TARGET_MIPS) || \
     defined(TARGET_PPC) || defined(TARGET_ALPHA) || defined(TARGET_CRIS) || \
@@ -361,7 +359,7 @@ int cpu_exec(CPUArchState *env)
                         cpu->interrupt_request &= ~CPU_INTERRUPT_HALT;
                         cpu->halted = 1;
                         cpu->exception_index = EXCP_HLT;
-                        cpu_loop_exit(env);
+                        cpu_loop_exit(cpu);
                     }
 #endif
 #if defined(TARGET_I386)
@@ -376,7 +374,7 @@ int cpu_exec(CPUArchState *env)
                                                           0);
                             do_cpu_init(x86_cpu);
                             cpu->exception_index = EXCP_HALTED;
-                            cpu_loop_exit(env);
+                            cpu_loop_exit(cpu);
                     } else if (interrupt_request & CPU_INTERRUPT_SIPI) {
                             do_cpu_sipi(x86_cpu);
                     } else if (env->hflags2 & HF2_GIF_MASK) {
@@ -628,7 +626,7 @@ int cpu_exec(CPUArchState *env)
                 if (unlikely(cpu->exit_request)) {
                     cpu->exit_request = 0;
                     cpu->exception_index = EXCP_INTERRUPT;
-                    cpu_loop_exit(env);
+                    cpu_loop_exit(cpu);
                 }
                 spin_lock(&tcg_ctx.tb_ctx.tb_lock);
                 tb = tb_find_fast(env);
@@ -699,7 +697,7 @@ int cpu_exec(CPUArchState *env)
                             }
                             cpu->exception_index = EXCP_INTERRUPT;
                             next_tb = 0;
-                            cpu_loop_exit(env);
+                            cpu_loop_exit(cpu);
                         }
                         break;
                     }

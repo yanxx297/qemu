@@ -542,7 +542,7 @@ void kemufuzzer_exception(CPUX86State *env, int e, target_ulong nexteip, int isi
     // Force QEMU to ignore the interrupt
     kenv->eip = nexteip;
     kenv->old_exception = -1;
-    kenv->exception_index = -1;
+    ENV_GET_CPU(kenv)->exception_index = -1;
     siglongjmp(ENV_GET_CPU(kenv)->jmp_env, 1);
   } else if (!isint && kemufuzzer_state.signalled >= 1) {
 //    kemufuzzer_save(env, KEMUFUZZER_POST_STATE, kenv->eip, e);
