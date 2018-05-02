@@ -387,7 +387,8 @@ int bdrv_create(BlockDriver *drv, const char* filename,
     };
 
     if (!drv->bdrv_create) {
-        return -ENOTSUP;
+        ret = -ENOTSUP;
+        goto out;
     }
 
     if (qemu_in_coroutine()) {
@@ -402,8 +403,9 @@ int bdrv_create(BlockDriver *drv, const char* filename,
     }
 
     ret = cco.ret;
-    g_free(cco.filename);
 
+out:
+    g_free(cco.filename);
     return ret;
 }
 
