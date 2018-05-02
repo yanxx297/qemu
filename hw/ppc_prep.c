@@ -37,6 +37,7 @@
 #include "ide.h"
 #include "loader.h"
 #include "mc146818rtc.h"
+#include "pc87312.h"
 #include "sysemu/blockdev.h"
 #include "sysemu/arch_init.h"
 #include "exec/address-spaces.h"
