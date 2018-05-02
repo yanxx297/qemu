@@ -3637,9 +3637,7 @@ int main(int argc, char **argv, char **envp)
         exit(1);
     }
     cpu = ENV_GET_CPU(env);
-#if defined(TARGET_SPARC) || defined(TARGET_PPC)
-    cpu_reset(cpu);
-#endif
+    cpu_reset(ENV_GET_CPU(env));
 
     thread_cpu = cpu;
 
