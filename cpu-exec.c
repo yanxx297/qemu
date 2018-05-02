@@ -35,9 +35,9 @@ int tb_invalidated_flag;
 
 //#define CONFIG_DEBUG_EXEC
 
-bool qemu_cpu_has_work(CPUArchState *env)
+bool qemu_cpu_has_work(CPUState *cpu)
 {
-    return cpu_has_work(env);
+    return cpu_has_work(cpu);
 }
 
 void cpu_loop_exit(CPUArchState *env)
@@ -189,9 +189,7 @@ volatile sig_atomic_t exit_request;
 
 int cpu_exec(CPUArchState *env)
 {
-#ifdef TARGET_PPC
     CPUState *cpu = ENV_GET_CPU(env);
-#endif
     int ret, interrupt_request;
     TranslationBlock *tb;
     uint8_t *tc_ptr;
@@ -202,7 +200,7 @@ int cpu_exec(CPUArchState *env)
 #endif
 
     if (env->halted) {
-        if (!cpu_has_work(env)) {
+        if (!cpu_has_work(cpu)) {
             return EXCP_HALTED;
         }
 
